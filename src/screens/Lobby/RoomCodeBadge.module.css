@@ -1,0 +1,48 @@
+.badge {
+  background: var(--color-mint);
+  border: var(--border-width-lg) solid var(--color-ink);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 16px 24px;
+  text-align: center;
+  min-width: 200px;
+}
+
+.label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-mint-text);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.code {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: 3px;
+  margin: 4px 0 8px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.actionButton {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  background: var(--color-white);
+  border: 2px solid var(--color-ink);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  cursor: pointer;
+  min-height: 36px;
+}
+
+.actionButton:active {
+  transform: translate(1px, 1px);
+}

@@ -1,0 +1,46 @@
+/*
+  Design tokens dérivés de Charte Graphique/Amimot Charte Graphique.dc.html.
+  Style "cartoon flat / bouncy" : contours épais, ombres portées franches et
+  décalées, couleurs saturées, coins très arrondis.
+*/
+:root {
+  /* Couleurs */
+  --color-ink: #2a1b4d; /* contours / texte */
+  --color-ink-dark: #150c26; /* ombre portée la plus sombre */
+  --color-pink: #ff4d8d;
+  --color-orange: #ff8c42;
+  --color-mint: #3eeba8; /* CTA principal */
+  --color-mint-text: #1f5e44; /* texte lisible sur fond menthe */
+  --color-cream: #fff6e9; /* fonds clairs */
+  --color-white: #ffffff;
+  --color-yellow: #ffc94d;
+  --color-purple: #8c6fe8;
+  --color-muted: #7a6e93;
+  --color-muted-light: #c9bee0;
+  --color-divider: #eadfc7;
+  --color-page-bg: #1f1435;
+
+  /* Typographie */
+  --font-display: 'Fredoka', sans-serif; /* titres, boutons */
+  --font-body: 'Poppins', sans-serif; /* texte, UI */
+
+  /* Rayons */
+  --radius-lg: 40px;
+  --radius-md: 24px;
+  --radius-sm: 18px;
+  --radius-pill: 999px;
+
+  /* Contours */
+  --border-width: 4px;
+  --border-width-lg: 5px;
+
+  /* Ombres portées "décalées" (signature du style) */
+  --shadow-sm: 5px 5px 0 var(--color-ink);
+  --shadow-md: 6px 6px 0 var(--color-ink);
+  --shadow-lg: 10px 10px 0 var(--color-ink);
+  --shadow-xl: 12px 12px 0 var(--color-ink-dark);
+  --shadow-pressed: 2px 2px 0 var(--color-ink);
+
+  /* Transitions */
+  --transition-press: transform 0.08s ease;
+}

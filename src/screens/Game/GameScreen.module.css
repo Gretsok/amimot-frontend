@@ -1,0 +1,23 @@
+.stage {
+  min-height: 100dvh;
+  background: var(--color-purple, #6b4fc9);
+  background: linear-gradient(160deg, var(--color-ink) 0%, #3a2566 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 24px;
+}
+
+.observerNote {
+  color: var(--color-cream);
+  text-align: center;
+  max-width: 360px;
+  font-size: 1.05rem;
+}
+
+.stopButton {
+  color: var(--color-cream);
+  border-color: var(--color-cream);
+}

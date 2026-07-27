@@ -1,0 +1,29 @@
+.title {
+  font-size: 1.6rem;
+  color: var(--color-ink);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.error {
+  color: var(--color-pink);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.switchMode {
+  background: none;
+  border: none;
+  color: var(--color-muted);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 8px;
+}

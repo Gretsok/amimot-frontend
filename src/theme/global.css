@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+@import './tokens.css';
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-page-bg);
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  /* Mobile-first : pas d'effets ":hover" comme mécanisme principal d'interaction,
+     texte non sélectionnable sur les éléments interactifs pour éviter la
+     sélection accidentelle au doigt. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font-family: inherit;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  margin: 0;
+}

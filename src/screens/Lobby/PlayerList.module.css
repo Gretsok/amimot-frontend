@@ -1,0 +1,50 @@
+.panel {
+  background: var(--color-cream);
+  border: var(--border-width-lg) solid var(--color-ink);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 1.3rem;
+  color: var(--color-ink);
+}
+
+.count {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.list {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.row {
+  position: relative;
+}
+
+.kickButton {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--color-ink);
+  background: var(--color-pink);
+  color: var(--color-cream);
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+}

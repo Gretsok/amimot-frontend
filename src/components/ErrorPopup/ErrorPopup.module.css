@@ -1,0 +1,15 @@
+.title {
+  font-size: 1.8rem;
+  color: var(--color-pink);
+  margin-bottom: 12px;
+}
+
+.message {
+  font-size: 1.05rem;
+  color: var(--color-ink);
+  margin-bottom: 24px;
+}
+
+.action {
+  width: 100%;
+}

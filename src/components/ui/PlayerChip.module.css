@@ -1,0 +1,38 @@
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--color-white);
+  border: var(--border-width) solid var(--color-ink);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+  padding: 8px 20px 8px 8px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 3px solid var(--color-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-ink);
+  flex-shrink: 0;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-ink);
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.hostBadge {
+  font-size: 0.75rem;
+  color: var(--color-orange);
+  font-weight: 700;
+}

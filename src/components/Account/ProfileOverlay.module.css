@@ -1,0 +1,27 @@
+.title {
+  font-size: 1.6rem;
+  color: var(--color-ink);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-muted);
+  margin-bottom: 16px;
+}
+
+.error {
+  color: var(--color-pink);
+  font-size: 0.9rem;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}

@@ -1,0 +1,42 @@
+.tile {
+  flex: 1;
+  min-width: 160px;
+  background: var(--color-cream);
+  border: var(--border-width) solid var(--color-ink);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 16px 20px;
+}
+
+.label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.value {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.editRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.numberInput {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  width: 70px;
+  border: var(--border-width) solid var(--color-ink);
+  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+}

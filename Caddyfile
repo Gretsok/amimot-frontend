@@ -1,0 +1,27 @@
+# DOMAIN et TLS_MODE sont substitués par des variables d'env (docker-compose.yml) :
+#   - en local/dev sans nom de domaine : DOMAIN=localhost, TLS_MODE=internal
+#     → Caddy génère un certificat auto-signé, aucune configuration requise.
+#   - en prod (VPS avec un vrai domaine) : DOMAIN=ton-domaine.fr, TLS_MODE=ton-email@example.com
+#     → Caddy obtient et renouvelle automatiquement un certificat Let's Encrypt.
+{$DOMAIN:localhost} {
+	tls {$TLS_MODE:internal}
+
+	root * /srv
+	encode gzip
+
+	# Seul ce conteneur est exposé publiquement (décision d'architecture #3) :
+	# il sert le build statique ET relaie /api et /socket.io vers "backend"
+	# en interne, via le DNS Docker.
+	handle /api/* {
+		reverse_proxy backend:3000
+	}
+
+	handle /socket.io/* {
+		reverse_proxy backend:3000
+	}
+
+	handle {
+		try_files {path} /index.html
+		file_server
+	}
+}
