@@ -21,8 +21,18 @@ export function GameProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    // `player` (l'objet du joueur courant) n'est renvoyé qu'au join/create/
+    // reconnect — sans ça, son `state` resterait figé sur sa valeur initiale
+    // (ex: "OBSERVER" pour toujours) alors que le serveur le fait évoluer
+    // (WAITING -> IN_GAME au lancement, OBSERVER/IN_GAME -> WAITING en fin de
+    // partie). On le resynchronise donc à chaque snapshot de room.
     function onRoomUpdated(snapshot) {
       setRoom(snapshot);
+      setPlayer((prev) => {
+        if (!prev) return prev;
+        const updated = snapshot.players.find((p) => p.id === prev.id);
+        return updated ? { ...prev, displayName: updated.displayName, state: updated.state } : prev;
+      });
     }
     function onRoomClosed() {
       reset();
@@ -94,6 +104,9 @@ export function GameProvider({ children }) {
     setRoom(res.room);
     setPlayer(res.player);
     setSessionToken(res.sessionToken);
+    // Room déjà en partie (le joueur rejoint en tant qu'observateur) : sans
+    // ça, gameState resterait null et l'écran resterait bloqué sur le Lobby.
+    if (res.gameState) setGameState({ gameId: res.room.currentGameId, ...res.gameState });
     return res;
   }, []);
 
