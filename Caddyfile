@@ -6,6 +6,13 @@
 {$DOMAIN:localhost} {
 	tls {$TLS_MODE:internal}
 
+	# HSTS : force le navigateur à toujours utiliser HTTPS pour ce domaine.
+	# Avec TLS_MODE=internal (dev, certificat auto-signé), un navigateur ayant
+	# déjà visité https://localhost une fois mettra aussi ce header en cache
+	# pour "localhost" - inconvénient dev mineur (résolu en vidant le cache
+	# HSTS du navigateur), pas un blocage fonctionnel.
+	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
 	root * /srv
 	encode gzip
 
