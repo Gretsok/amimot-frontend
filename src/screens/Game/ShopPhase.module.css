@@ -1,0 +1,68 @@
+.phase {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 480px;
+}
+
+.title {
+  font-family: var(--font-display);
+  color: var(--color-cream);
+  margin: 0;
+}
+
+.coins {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-yellow);
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.observerNote {
+  color: var(--color-cream);
+  text-align: center;
+}
+
+.handFullNote {
+  color: var(--color-pink);
+  text-align: center;
+  font-weight: 600;
+}
+
+.catalog {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.catalogItem {
+  background: var(--color-white);
+  border: var(--border-width) solid var(--color-ink);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 140px;
+}
+
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-align: center;
+  margin: 0;
+}
+
+.price {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  margin: 0;
+}

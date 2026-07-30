@@ -1,0 +1,9 @@
+.indicator {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-cream);
+  background: var(--color-ink);
+  border-radius: var(--radius-pill);
+  padding: 8px 20px;
+  font-size: 0.95rem;
+}

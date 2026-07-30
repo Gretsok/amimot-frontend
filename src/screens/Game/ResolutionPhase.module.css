@@ -1,0 +1,68 @@
+.phase {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 480px;
+}
+
+.title {
+  font-family: var(--font-display);
+  color: var(--color-cream);
+  margin: 0;
+}
+
+.note {
+  color: var(--color-cream);
+}
+
+.reveal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background: var(--color-cream);
+  border: var(--border-width-lg) solid var(--color-ink);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 24px;
+  width: 100%;
+}
+
+.word {
+  font-family: var(--font-display);
+  color: var(--color-ink);
+  font-size: 2rem;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.players {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.playerOutcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.reason {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.trapNote {
+  color: var(--color-pink);
+  font-weight: 600;
+}
+
+.hostControls {
+  display: flex;
+  gap: 12px;
+}

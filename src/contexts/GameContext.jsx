@@ -10,6 +10,7 @@ export function GameProvider({ children }) {
   const [room, setRoom] = useState(null);
   const [player, setPlayer] = useState(null);
   const [gameState, setGameState] = useState(null);
+  const [myGameState, setMyGameState] = useState(null);
   const [lastEndReason, setLastEndReason] = useState(null);
   const reconnectAttempted = useRef(false);
 
@@ -17,6 +18,7 @@ export function GameProvider({ children }) {
     setRoom(null);
     setPlayer(null);
     setGameState(null);
+    setMyGameState(null);
     clearSessionToken();
   }, []);
 
@@ -40,18 +42,36 @@ export function GameProvider({ children }) {
     function onGameStarted({ gameId, publicState }) {
       setGameState({ gameId, ...publicState });
     }
-    function onPublicStateUpdated({ patch }) {
-      setGameState((prev) => (prev ? { ...prev, ...patch } : prev));
+    // Renvoie systématiquement l'état public COMPLET (jamais un patch
+    // partiel) : les tableaux imbriqués (contraintes, ordre de révélation)
+    // ne peuvent pas être "patchés" proprement par un merge superficiel —
+    // remplacer entièrement est plus simple et plus sûr, le payload restant
+    // de toute façon petit (décision de plan §0.4).
+    function onPublicStateUpdated({ publicState }) {
+      setGameState((prev) => (prev ? { gameId: prev.gameId, ...publicState } : prev));
     }
+    // État privé (main, mot-piège, proposition) : ciblé à ce seul joueur,
+    // jamais mélangé au broadcast public — même logique de remplacement
+    // complet que l'état public.
+    function onPrivateStateUpdated({ privateState }) {
+      setMyGameState(privateState);
+    }
+    // Ne se déclenche que sur un abandon prématuré (room:stop) ou un retour
+    // au lobby explicite après l'écran de classement (room:returnToLobby) —
+    // jamais sur la transition naturelle vers la phase ENDED, qui arrive via
+    // un onPublicStateUpdated ordinaire et doit garder gameState peuplé pour
+    // afficher le classement final.
     function onGameEnded({ reason }) {
       setLastEndReason(reason);
       setGameState(null);
+      setMyGameState(null);
     }
 
     socket.on('room:updated', onRoomUpdated);
     socket.on('room:closed', onRoomClosed);
     socket.on('game:started', onGameStarted);
     socket.on('game:publicStateUpdated', onPublicStateUpdated);
+    socket.on('game:privateStateUpdated', onPrivateStateUpdated);
     socket.on('game:ended', onGameEnded);
 
     return () => {
@@ -59,6 +79,7 @@ export function GameProvider({ children }) {
       socket.off('room:closed', onRoomClosed);
       socket.off('game:started', onGameStarted);
       socket.off('game:publicStateUpdated', onPublicStateUpdated);
+      socket.off('game:privateStateUpdated', onPrivateStateUpdated);
       socket.off('game:ended', onGameEnded);
     };
   }, [socket, reset]);
@@ -79,6 +100,7 @@ export function GameProvider({ children }) {
           setRoom(res.room);
           setPlayer(res.player);
           if (res.gameState) setGameState({ gameId: res.room.currentGameId, ...res.gameState });
+          if (res.privateState) setMyGameState(res.privateState);
         })
         .catch(() => clearSessionToken());
     }
@@ -119,8 +141,20 @@ export function GameProvider({ children }) {
   const updateSettings = useCallback((settings) => emitAsync('room:updateSettings', { settings }), []);
   const startGame = useCallback(() => emitAsync('room:start', {}), []);
   const stopGame = useCallback(() => emitAsync('room:stop', {}), []);
+  const returnToLobby = useCallback(() => emitAsync('room:returnToLobby', {}), []);
   const setDisplayName = useCallback((displayName) => emitAsync('player:setDisplayName', { displayName }), []);
-  const clickButton = useCallback(() => emitAsync('game:click', {}), []);
+
+  // --- Actions de gameplay -------------------------------------------------
+  const submitTrapWord = useCallback((text) => emitAsync('game:submitTrapWord', { text }), []);
+  const validateTrapWord = useCallback(() => emitAsync('game:validateTrapWord', {}), []);
+  const playConstraintCard = useCallback(
+    (cardInstanceId, type, value) => emitAsync('game:playConstraintCard', { cardInstanceId, type, value }),
+    []
+  );
+  const submitProposition = useCallback((text) => emitAsync('game:submitProposition', { text }), []);
+  const validateProposition = useCallback(() => emitAsync('game:validateProposition', {}), []);
+  const buyCard = useCallback((cardId) => emitAsync('game:buyCard', { cardId }), []);
+  const advanceResolution = useCallback((action) => emitAsync('game:advanceResolution', { action }), []);
 
   return (
     <GameContext.Provider
@@ -128,6 +162,7 @@ export function GameProvider({ children }) {
         room,
         player,
         gameState,
+        myGameState,
         lastEndReason,
         createRoom,
         joinRoom,
@@ -136,8 +171,15 @@ export function GameProvider({ children }) {
         updateSettings,
         startGame,
         stopGame,
+        returnToLobby,
         setDisplayName,
-        clickButton,
+        submitTrapWord,
+        validateTrapWord,
+        playConstraintCard,
+        submitProposition,
+        validateProposition,
+        buyCard,
+        advanceResolution,
         resetLocalState: reset,
       }}
     >
