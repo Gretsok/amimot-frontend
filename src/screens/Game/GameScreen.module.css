@@ -17,6 +17,21 @@
   font-size: 1.05rem;
 }
 
+/* Conteneur partagé par toutes les phases + l'écran de classement final :
+   centralise le max-width ici plutôt que de le dupliquer dans chacun des 6
+   fichiers CSS de phase, et permet un seul point d'ajout du palier
+   tablette/desktop. */
+.content {
+  width: 100%;
+  max-width: 480px;
+}
+
+@media (min-width: 768px) {
+  .content {
+    max-width: 640px;
+  }
+}
+
 .stopButton {
   color: var(--color-cream);
   border-color: var(--color-cream);

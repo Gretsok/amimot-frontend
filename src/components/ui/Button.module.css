@@ -41,9 +41,35 @@
   transform: scale(0.97);
 }
 
+.link {
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: var(--color-muted);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 400;
+  text-decoration: underline;
+  min-height: auto;
+  min-width: auto;
+  padding: 8px;
+}
+
+.link:active {
+  box-shadow: none;
+  transform: none;
+}
+
 .button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
   box-shadow: var(--shadow-md);
+}
+
+/* Même spécificité que .button:disabled (pseudo-classe + 1 classe) : gagne
+   par ordre de déclaration, pour que le variant "link" reste plat même
+   désactivé plutôt que d'hériter l'ombre portée du bouton de base. */
+.link:disabled {
+  box-shadow: none;
 }

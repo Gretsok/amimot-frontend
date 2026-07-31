@@ -16,6 +16,10 @@
   color: var(--color-ink);
 }
 
+.urgent {
+  color: var(--color-danger);
+}
+
 .unit {
   font-size: 0.9rem;
   color: var(--color-muted);

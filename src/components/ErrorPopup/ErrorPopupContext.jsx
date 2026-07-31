@@ -8,6 +8,8 @@ const MESSAGES = {
   ROOM_NOT_FOUND: "Cette room n'existe pas (ou plus).",
   PERMISSION_DENIED: "Vous n'avez pas la permission de faire ça.",
   DISCONNECTED: 'Vous avez été déconnecté.',
+  TIMEOUT: 'La connexion est trop lente. Réessaie.',
+  CLIPBOARD_ERROR: 'Impossible de copier automatiquement.',
   INTERNAL_ERROR: "Une erreur inattendue s'est produite.",
 };
 

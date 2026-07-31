@@ -60,9 +60,9 @@ export default function AuthOverlay({ open, onClose }) {
         {error && <p className={styles.error}>{error}</p>}
         <Button type="submit">{mode === 'login' ? 'Se connecter' : "S'inscrire"}</Button>
         <GoogleOAuthButton />
-        <button type="button" className={styles.switchMode} onClick={() => setMode(mode === 'login' ? 'register' : 'login')}>
+        <Button type="button" variant="link" onClick={() => setMode(mode === 'login' ? 'register' : 'login')}>
           {mode === 'login' ? 'Pas encore de compte ? Inscris-toi' : 'Déjà un compte ? Connecte-toi'}
-        </button>
+        </Button>
       </form>
     </Modal>
   );

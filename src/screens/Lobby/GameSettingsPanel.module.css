@@ -29,14 +29,3 @@
   gap: 8px;
   margin-top: 4px;
 }
-
-.numberInput {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--color-ink);
-  width: 70px;
-  border: var(--border-width) solid var(--color-ink);
-  border-radius: var(--radius-sm);
-  padding: 6px 8px;
-}

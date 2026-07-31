@@ -10,8 +10,14 @@ export default function ProfileOverlay({ open, onClose }) {
   const { user, logout, refresh } = useAuth();
   const [pseudo, setPseudo] = useState(user?.pseudo || '');
   const [error, setError] = useState(null);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   if (!user) return null;
+
+  function handleClose() {
+    setConfirmingDelete(false);
+    onClose();
+  }
 
   async function handleSave() {
     setError(null);
@@ -23,9 +29,13 @@ export default function ProfileOverlay({ open, onClose }) {
     }
   }
 
-  async function handleDelete() {
-    if (!window.confirm('Supprimer définitivement ton compte ?')) return;
+  async function handleConfirmDelete() {
     await api.deleteMe();
+    // Le serveur invalide déjà le cookie de session à la suppression ; sans
+    // ce refresh, `user` resterait peuplé côté client et HomeScreen
+    // continuerait d'afficher "Mon profil" pour un compte qui n'existe plus.
+    await refresh();
+    setConfirmingDelete(false);
     onClose();
   }
 
@@ -40,8 +50,27 @@ export default function ProfileOverlay({ open, onClose }) {
     URL.revokeObjectURL(url);
   }
 
+  if (confirmingDelete) {
+    return (
+      <Modal open={open} onClose={handleClose}>
+        <h2 className={styles.title}>Supprimer ton compte ?</h2>
+        <p className={styles.confirmText}>
+          Cette action est définitive et supprimera toutes tes données. Impossible de revenir en arrière.
+        </p>
+        <div className={styles.actions}>
+          <Button variant="ghost" onClick={() => setConfirmingDelete(false)}>
+            Annuler
+          </Button>
+          <Button variant="secondary" onClick={handleConfirmDelete}>
+            Supprimer définitivement
+          </Button>
+        </div>
+      </Modal>
+    );
+  }
+
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={handleClose}>
       <h2 className={styles.title}>Mon profil</h2>
       <div className={styles.stats}>
         <span>XP : {user.xp}</span>
@@ -57,7 +86,7 @@ export default function ProfileOverlay({ open, onClose }) {
         <Button variant="ghost" onClick={logout}>
           Se déconnecter
         </Button>
-        <Button variant="secondary" onClick={handleDelete}>
+        <Button variant="secondary" onClick={() => setConfirmingDelete(true)}>
           Supprimer mon compte
         </Button>
       </div>

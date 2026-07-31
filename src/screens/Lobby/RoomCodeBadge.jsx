@@ -1,14 +1,21 @@
 import { useState } from 'react';
+import Button from '../../components/ui/Button';
+import { useErrorPopup } from '../../components/ErrorPopup/ErrorPopupContext';
 import styles from './RoomCodeBadge.module.css';
 
 export default function RoomCodeBadge({ inviteCode }) {
   const [revealed, setRevealed] = useState(false);
   const [copiedWhat, setCopiedWhat] = useState(null); // 'code' | 'link' | null
+  const { showError } = useErrorPopup();
 
   async function copyText(text, what) {
-    await navigator.clipboard.writeText(text);
-    setCopiedWhat(what);
-    setTimeout(() => setCopiedWhat(null), 1500);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedWhat(what);
+      setTimeout(() => setCopiedWhat(null), 1500);
+    } catch (err) {
+      showError('CLIPBOARD_ERROR', err.message);
+    }
   }
 
   function handleCopyCode() {
@@ -27,15 +34,15 @@ export default function RoomCodeBadge({ inviteCode }) {
           seul le bouton Afficher/Masquer contrôle la visibilité. */}
       <div className={styles.code}>{revealed ? inviteCode : '••••••'}</div>
       <div className={styles.actions}>
-        <button className={styles.actionButton} onClick={() => setRevealed((v) => !v)}>
+        <Button variant="ghost" onClick={() => setRevealed((v) => !v)}>
           {revealed ? 'Masquer' : 'Afficher'}
-        </button>
-        <button className={styles.actionButton} onClick={handleCopyCode}>
+        </Button>
+        <Button variant="ghost" onClick={handleCopyCode}>
           {copiedWhat === 'code' ? 'Copié !' : 'Copier le code'}
-        </button>
-        <button className={styles.actionButton} onClick={handleCopyLink}>
+        </Button>
+        <Button variant="ghost" onClick={handleCopyLink}>
           {copiedWhat === 'link' ? 'Copié !' : 'Copier le lien'}
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -20,6 +20,11 @@
   --color-divider: #eadfc7;
   --color-page-bg: #1f1435;
 
+  /* Couleurs sémantiques (feedback) */
+  --color-danger: #e8384f; /* Rouge alerte */
+  --color-success: #1fae6e; /* Vert succès */
+  --color-warning: var(--color-yellow); /* réutilise l'accent existant, pas de nouvelle teinte */
+
   /* Typographie */
   --font-display: 'Fredoka', sans-serif; /* titres, boutons */
   --font-body: 'Poppins', sans-serif; /* texte, UI */

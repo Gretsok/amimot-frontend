@@ -4,6 +4,7 @@ const VARIANT_CLASS = {
   primary: styles.primary,
   secondary: styles.secondary,
   ghost: styles.ghost,
+  link: styles.link,
 };
 
 export default function Button({ variant = 'primary', className = '', ...props }) {

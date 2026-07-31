@@ -39,6 +39,13 @@ export default function ResolutionPhase({ gameConfig }) {
     return p ? p.displayName : '?';
   }
 
+  // Reprend le joueur complet (avec son statut de connexion) plutôt qu'un
+  // objet ad hoc { id, displayName } : sans ça, PlayerChip afficherait
+  // toujours "connecté" ici, quel que soit l'état réel du joueur.
+  function findPlayer(id) {
+    return room.players.find((pl) => pl.id === id) || { id, displayName: playerName(id) };
+  }
+
   async function handleNext() {
     try {
       await advanceResolution('next');
@@ -71,7 +78,7 @@ export default function ResolutionPhase({ gameConfig }) {
           <div className={styles.players}>
             {currentWord.submitterIds.map((id) => (
               <div key={id} className={styles.playerOutcome}>
-                <PlayerChip player={{ id, displayName: playerName(id) }} />
+                <PlayerChip player={findPlayer(id)} />
                 {(outcome[id] || []).map((reason, i) => (
                   <span key={i} className={styles.reason}>
                     {reasonText(reason)}
@@ -91,7 +98,7 @@ export default function ResolutionPhase({ gameConfig }) {
             .filter((id) => !currentWord.submitterIds.includes(id))
             .map((id) => (
               <div key={id} className={styles.playerOutcome}>
-                <PlayerChip player={{ id, displayName: playerName(id) }} />
+                <PlayerChip player={findPlayer(id)} />
                 {(outcome[id] || []).map((reason, i) => (
                   <span key={i} className={styles.reason}>
                     {reasonText(reason)}

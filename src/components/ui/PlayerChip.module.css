@@ -36,3 +36,21 @@
   color: var(--color-orange);
   font-weight: 700;
 }
+
+/* Dimme uniquement l'avatar et le fond, jamais le texte : un opacity global
+   sur .chip faisait perdre trop de contraste au nom et au badge sur le fond
+   sombre des écrans de jeu. */
+.disconnected {
+  background: var(--color-divider);
+}
+
+.disconnected .avatar {
+  opacity: 0.5;
+  filter: grayscale(70%);
+}
+
+.offlineBadge {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  font-weight: 600;
+}

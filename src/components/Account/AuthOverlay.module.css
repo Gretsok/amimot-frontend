@@ -12,18 +12,7 @@
 }
 
 .error {
-  color: var(--color-pink);
+  color: var(--color-danger);
   font-size: 0.9rem;
   margin: 0;
-}
-
-.switchMode {
-  background: none;
-  border: none;
-  color: var(--color-muted);
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  text-decoration: underline;
-  cursor: pointer;
-  padding: 8px;
 }

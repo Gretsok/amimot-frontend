@@ -48,7 +48,9 @@ export default function GameScreen() {
   return (
     <div className={styles.stage}>
       {isEnded ? (
-        <EndGameRanking />
+        <div className={styles.content}>
+          <EndGameRanking />
+        </div>
       ) : (
         <>
           {isObserver && (
@@ -56,7 +58,11 @@ export default function GameScreen() {
               Tu observes cette partie déjà commencée — tu pourras jouer à la prochaine manche.
             </p>
           )}
-          {PhaseComponent && <PhaseComponent gameConfig={gameConfig} />}
+          {PhaseComponent && (
+            <div className={styles.content}>
+              <PhaseComponent gameConfig={gameConfig} />
+            </div>
+          )}
           {isHost && (
             <Button variant="ghost" onClick={handleStop} className={styles.stopButton}>
               Arrêter la partie

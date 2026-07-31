@@ -19,3 +19,18 @@
   outline: none;
   box-shadow: var(--shadow-sm);
 }
+
+.input:disabled {
+  background: var(--color-divider);
+  color: var(--color-muted);
+  cursor: not-allowed;
+}
+
+/* Variante compacte pour les champs numériques courts (ex: réglages de room)
+   plutôt que de laisser un composant tiers dicter la largeur/le padding via
+   un sélecteur descendant fragile. */
+.compact {
+  width: 70px;
+  padding: 6px 8px;
+  min-height: auto;
+}

@@ -147,12 +147,14 @@ export function GameProvider({ children }) {
   // --- Actions de gameplay -------------------------------------------------
   const submitTrapWord = useCallback((text) => emitAsync('game:submitTrapWord', { text }), []);
   const validateTrapWord = useCallback(() => emitAsync('game:validateTrapWord', {}), []);
+  const unvalidateTrapWord = useCallback(() => emitAsync('game:unvalidateTrapWord', {}), []);
   const playConstraintCard = useCallback(
     (cardInstanceId, type, value) => emitAsync('game:playConstraintCard', { cardInstanceId, type, value }),
     []
   );
   const submitProposition = useCallback((text) => emitAsync('game:submitProposition', { text }), []);
   const validateProposition = useCallback(() => emitAsync('game:validateProposition', {}), []);
+  const unvalidateProposition = useCallback(() => emitAsync('game:unvalidateProposition', {}), []);
   const buyCard = useCallback((cardId) => emitAsync('game:buyCard', { cardId }), []);
   const advanceResolution = useCallback((action) => emitAsync('game:advanceResolution', { action }), []);
 
@@ -175,9 +177,11 @@ export function GameProvider({ children }) {
         setDisplayName,
         submitTrapWord,
         validateTrapWord,
+        unvalidateTrapWord,
         playConstraintCard,
         submitProposition,
         validateProposition,
+        unvalidateProposition,
         buyCard,
         advanceResolution,
         resetLocalState: reset,

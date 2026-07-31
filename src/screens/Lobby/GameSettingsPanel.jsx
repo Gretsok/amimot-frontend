@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Button from '../../components/ui/Button';
+import TextInput from '../../components/ui/TextInput';
 import styles from './GameSettingsPanel.module.css';
 
 export default function GameSettingsPanel({ settings, isHost, onUpdateSettings }) {
@@ -16,15 +17,18 @@ export default function GameSettingsPanel({ settings, isHost, onUpdateSettings }
 
   return (
     <div className={styles.tile}>
-      <div className={styles.label}>Joueurs max</div>
+      <label htmlFor="max-players-input" className={styles.label}>
+        Joueurs max
+      </label>
       <div className={styles.editRow}>
-        <input
+        <TextInput
+          id="max-players-input"
           type="number"
           min={2}
           max={20}
+          compact
           value={maxPlayers}
           onChange={(e) => setMaxPlayers(Number(e.target.value))}
-          className={styles.numberInput}
         />
         <Button
           variant="ghost"

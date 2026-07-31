@@ -25,36 +25,38 @@ export default function LobbyScreen() {
     <div className={styles.stage}>
       <div className={styles.blob} />
 
-      <div className={styles.topRow}>
-        <h1 className={styles.title}>Salle d'attente</h1>
-        <RoomCodeBadge inviteCode={room.inviteCode} />
-      </div>
+      <div className={styles.content}>
+        <div className={styles.topRow}>
+          <h1 className={styles.title}>Salle d'attente</h1>
+          <RoomCodeBadge inviteCode={room.inviteCode} />
+        </div>
 
-      <PlayerList
-        players={room.players}
-        maxPlayers={room.settings.maxPlayers}
-        isHost={isHost}
-        ownPlayerId={player.id}
-        onKick={(targetId) => safeguard(() => kickPlayer(targetId))}
-      />
-
-      <div className={styles.settingsRow}>
-        <GameSettingsPanel
-          settings={room.settings}
+        <PlayerList
+          players={room.players}
+          maxPlayers={room.settings.maxPlayers}
           isHost={isHost}
-          onUpdateSettings={(settings) => safeguard(() => updateSettings(settings))}
+          ownPlayerId={player.id}
+          onKick={(targetId) => safeguard(() => kickPlayer(targetId))}
         />
-      </div>
 
-      <div className={styles.footer}>
-        <Button variant="ghost" onClick={() => safeguard(leaveRoom)}>
-          Quitter
-        </Button>
-        {isHost && (
-          <Button onClick={() => safeguard(startGame)} className={styles.startButton}>
-            C'est parti !
+        <div className={styles.settingsRow}>
+          <GameSettingsPanel
+            settings={room.settings}
+            isHost={isHost}
+            onUpdateSettings={(settings) => safeguard(() => updateSettings(settings))}
+          />
+        </div>
+
+        <div className={styles.footer}>
+          <Button variant="ghost" onClick={() => safeguard(leaveRoom)}>
+            Quitter
           </Button>
-        )}
+          {isHost && (
+            <Button onClick={() => safeguard(startGame)} className={styles.startButton}>
+              C'est parti !
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

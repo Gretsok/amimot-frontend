@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import RoundIndicator from '../../components/game/RoundIndicator';
 import PhaseTimer from '../../components/game/PhaseTimer';
+import ReadyCount from '../../components/game/ReadyCount';
 import ConstraintCard from '../../components/game/ConstraintCard';
 import ConstraintsList from '../../components/game/ConstraintsList';
 import TextInput from '../../components/ui/TextInput';
@@ -11,7 +12,16 @@ import { precheckWord } from '../../domain/constraintPreCheck';
 import styles from './PreparationPhase.module.css';
 
 export default function PreparationPhase({ gameConfig }) {
-  const { player, gameState, myGameState, submitTrapWord, validateTrapWord, playConstraintCard } = useGamePhase();
+  const {
+    room,
+    player,
+    gameState,
+    myGameState,
+    submitTrapWord,
+    validateTrapWord,
+    unvalidateTrapWord,
+    playConstraintCard,
+  } = useGamePhase();
   const { showError } = useErrorPopup();
   const [draft, setDraft] = useState(myGameState?.trapWord || '');
 
@@ -48,6 +58,14 @@ export default function PreparationPhase({ gameConfig }) {
     }
   }
 
+  async function handleUnvalidate() {
+    try {
+      await unvalidateTrapWord();
+    } catch (err) {
+      showError(err.code || 'INTERNAL_ERROR', err.message);
+    }
+  }
+
   async function handlePlayCard(instanceId, type, value) {
     try {
       await playConstraintCard(instanceId, type, value);
@@ -60,6 +78,10 @@ export default function PreparationPhase({ gameConfig }) {
     <div className={styles.phase}>
       <RoundIndicator round={gameState.round} totalRounds={gameConfig.rounds.length} />
       <PhaseTimer phaseEndsAt={gameState.phaseEndsAt} />
+      <ReadyCount
+        ready={gameState.readyPlayerIds?.length ?? 0}
+        total={room.players.filter((p) => p.state === 'IN_GAME').length}
+      />
       <h2 className={styles.letter}>Lettre : {gameState.letter}</h2>
 
       {isObserver ? (
@@ -77,6 +99,7 @@ export default function PreparationPhase({ gameConfig }) {
           <Button onClick={handleValidate} disabled={!precheck.valid || !draft || myGameState?.trapWordValid}>
             {myGameState?.trapWordValid ? 'Validé' : 'Valider'}
           </Button>
+          {myGameState?.trapWordValid && <Button onClick={handleUnvalidate}>Modifier</Button>}
 
           {hand.length > 0 && (
             <div className={styles.hand}>

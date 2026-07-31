@@ -6,6 +6,21 @@
   padding: 32px 20px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Le fond rose reste plein écran (comme .stage des autres écrans), mais le
+   contenu lui-même est plafonné et centré : sans ça, les panneaux (Joueurs,
+   réglages) s'étirent sur toute la largeur en tablette/desktop, avec un grand
+   vide entre eux plutôt qu'une mise en page pensée pour l'espace disponible. */
+.content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
   gap: 24px;
 }
 

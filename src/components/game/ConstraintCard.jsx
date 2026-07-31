@@ -83,25 +83,30 @@ export default function ConstraintCard({ card, activeConstraints = [], onPlay, d
         )}
 
         {needsTarget && (
-          <ul className={styles.targetList}>
-            {activeConstraints.length === 0 && <li>Aucune contrainte active à détruire.</li>}
-            {activeConstraints.map((constraint) => (
-              <li key={constraint.id}>
-                <label>
-                  <input
-                    type="radio"
-                    name="target-constraint"
-                    checked={targetId === constraint.id}
-                    onChange={() => setTargetId(constraint.id)}
-                  />
-                  {constraintLabel(constraint)}
-                </label>
-              </li>
-            ))}
-          </ul>
+          <fieldset className={styles.targetFieldset}>
+            <legend className={styles.targetLegend}>Contrainte à détruire</legend>
+            <ul className={styles.targetList}>
+              {activeConstraints.length === 0 && <li>Aucune contrainte active à détruire.</li>}
+              {activeConstraints.map((constraint) => (
+                <li key={constraint.id}>
+                  <label>
+                    <input
+                      type="radio"
+                      name="target-constraint"
+                      checked={targetId === constraint.id}
+                      onChange={() => setTargetId(constraint.id)}
+                    />
+                    {constraintLabel(constraint)}
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </fieldset>
         )}
 
-        <Button onClick={confirm}>Confirmer</Button>
+        <Button onClick={confirm} disabled={needsTarget && !targetId}>
+          Confirmer
+        </Button>
       </Modal>
     </div>
   );

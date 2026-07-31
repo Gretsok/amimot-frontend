@@ -89,13 +89,13 @@ export default function HomeScreen() {
 
         <div className={styles.accountRow}>
           {user ? (
-            <button className={styles.linkButton} onClick={() => setProfileOpen(true)}>
+            <Button variant="link" onClick={() => setProfileOpen(true)}>
               Mon profil ({user.pseudo})
-            </button>
+            </Button>
           ) : (
-            <button className={styles.linkButton} onClick={() => setAuthOpen(true)}>
+            <Button variant="link" onClick={() => setAuthOpen(true)}>
               Se connecter / créer un compte
-            </button>
+            </Button>
           )}
         </div>
       </div>

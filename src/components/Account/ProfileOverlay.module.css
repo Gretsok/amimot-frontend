@@ -15,8 +15,14 @@
 }
 
 .error {
-  color: var(--color-pink);
+  color: var(--color-danger);
   font-size: 0.9rem;
+}
+
+.confirmText {
+  color: var(--color-ink);
+  font-size: 1rem;
+  margin-bottom: 16px;
 }
 
 .actions {

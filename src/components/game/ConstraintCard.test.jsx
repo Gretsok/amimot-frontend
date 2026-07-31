@@ -57,4 +57,33 @@ describe('ConstraintCard', () => {
     render(<ConstraintCard card={{ instanceId: 'c1', type: 'IMPOSE_LETTER' }} onPlay={() => {}} disabled />);
     expect(screen.getByRole('button', { name: 'Jouer' })).toBeDisabled();
   });
+
+  it('disables "Confirmer" for a DESTROY_CONSTRAINT card until a target is selected', async () => {
+    const onPlay = vi.fn();
+    render(
+      <ConstraintCard
+        card={{ instanceId: 'c3', type: 'DESTROY_CONSTRAINT' }}
+        activeConstraints={[{ id: 'target-1', type: 'MAX_LENGTH', value: 5 }]}
+        onPlay={onPlay}
+      />
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Jouer' }));
+    expect(screen.getByRole('button', { name: 'Confirmer' })).toBeDisabled();
+
+    await userEvent.click(screen.getByRole('radio'));
+    expect(screen.getByRole('button', { name: 'Confirmer' })).not.toBeDisabled();
+  });
+
+  it('groups the target-constraint radios in a labeled fieldset', async () => {
+    render(
+      <ConstraintCard
+        card={{ instanceId: 'c3', type: 'DESTROY_CONSTRAINT' }}
+        activeConstraints={[{ id: 'target-1', type: 'MAX_LENGTH', value: 5 }]}
+        onPlay={() => {}}
+      />
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Jouer' }));
+    expect(screen.getByRole('group', { name: 'Contrainte à détruire' })).toBeInTheDocument();
+  });
 });
