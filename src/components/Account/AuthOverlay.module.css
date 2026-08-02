@@ -53,6 +53,14 @@
   text-decoration: underline;
 }
 
+.forgot {
+  align-self: flex-start;
+  font-size: 0.85rem;
+  color: var(--color-ink);
+  text-decoration: underline;
+  margin-top: -6px;
+}
+
 .retention {
   color: var(--color-muted);
   font-size: 0.78rem;

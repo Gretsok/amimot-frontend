@@ -100,6 +100,12 @@ export default function AuthOverlay({ open, onClose }) {
           </>
         )}
 
+        {!isRegister && (
+          <Link to="/mot-de-passe-oublie" className={styles.forgot} onClick={onClose}>
+            Mot de passe oublié ?
+          </Link>
+        )}
+
         {error && <p className={styles.error}>{error}</p>}
         <Button type="submit" disabled={!canSubmit}>
           {isRegister ? "S'inscrire" : 'Se connecter'}

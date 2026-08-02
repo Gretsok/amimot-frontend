@@ -45,6 +45,12 @@ export const api = {
   login: (email, password) =>
     request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
   logout: () => request('/auth/logout', { method: 'POST' }),
+  // Répond 204 quoi qu'il arrive, y compris pour une adresse inconnue : côté
+  // interface aussi, rien ne doit permettre de deviner qui a un compte.
+  forgotPassword: (email) =>
+    request('/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email }) }),
+  resetPassword: (token, password) =>
+    request('/auth/reset-password', { method: 'POST', body: JSON.stringify({ token, password }) }),
   me: () => request('/account/me'),
   updateMe: (pseudo) => request('/account/me', { method: 'PATCH', body: JSON.stringify({ pseudo }) }),
   deleteMe: () => request('/account/me', { method: 'DELETE' }),

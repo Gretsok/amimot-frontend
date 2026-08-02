@@ -10,6 +10,8 @@ import HomeScreen from './screens/Home/HomeScreen';
 import LobbyScreen from './screens/Lobby/LobbyScreen';
 import GameScreen from './screens/Game/GameScreen';
 import AccountScreen from './screens/Account/AccountScreen';
+import ForgotPasswordScreen from './screens/Auth/ForgotPasswordScreen';
+import ResetPasswordScreen from './screens/Auth/ResetPasswordScreen';
 import PrivacyPolicy from './screens/Legal/PrivacyPolicy';
 import LegalNotice from './screens/Legal/LegalNotice';
 import { useAuth } from './hooks/useAuth';
@@ -47,6 +49,10 @@ function AppShell() {
             </RequireAuth>
           }
         />
+        {/* Accessibles sans session : on arrive sur /reinitialiser depuis un
+            lien d'email, précisément parce qu'on ne peut plus se connecter. */}
+        <Route path="/mot-de-passe-oublie" element={<ForgotPasswordScreen />} />
+        <Route path="/reinitialiser" element={<ResetPasswordScreen />} />
         <Route path="/confidentialite" element={<PrivacyPolicy />} />
         <Route path="/mentions-legales" element={<LegalNotice />} />
         <Route path="*" element={<Navigate to="/" replace />} />
