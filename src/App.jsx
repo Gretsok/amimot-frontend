@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { GameProvider, GameContext } from './contexts/GameContext';
 import { ErrorPopupProvider } from './components/ErrorPopup/ErrorPopupContext';
 import ErrorPopup from './components/ErrorPopup/ErrorPopup';
+import ErrorToasts from './components/ErrorPopup/ErrorToasts';
 import HomeScreen from './screens/Home/HomeScreen';
 import LobbyScreen from './screens/Lobby/LobbyScreen';
 import GameScreen from './screens/Game/GameScreen';
@@ -23,6 +24,7 @@ function AppShell() {
     <ErrorPopupProvider onBackToMenu={resetLocalState}>
       <Screen />
       <ErrorPopup />
+      <ErrorToasts />
     </ErrorPopupProvider>
   );
 }

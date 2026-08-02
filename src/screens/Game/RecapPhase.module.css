@@ -12,6 +12,14 @@
   margin: 0;
 }
 
+.multiplier {
+  color: var(--color-yellow);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+}
+
 .list {
   list-style: none;
   padding: 0;
@@ -24,24 +32,75 @@
 
 .row {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
   background: var(--color-cream);
   border: var(--border-width) solid var(--color-ink);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
-  padding: 10px 16px;
+  padding: 12px 16px;
+}
+
+/* Repérer sa propre ligne d'un coup d'œil dans une liste de joueurs. */
+.self {
+  border-color: var(--color-mint);
+  box-shadow: var(--shadow-md);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.totals {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.1;
+}
+
+.totalLabel {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .score {
   font-family: var(--font-display);
   font-weight: 700;
+  font-size: 1.2rem;
   color: var(--color-ink);
-  transition: transform 0.3s ease;
+  white-space: nowrap;
+}
+
+.reasons {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reason {
+  font-size: 0.85rem;
+  color: var(--color-muted);
 }
 
 .delta {
   font-size: 0.8rem;
-  color: var(--color-muted);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.waitingNote {
+  color: var(--color-cream);
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin: 0;
 }

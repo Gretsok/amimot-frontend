@@ -1,4 +1,5 @@
 .stage {
+  position: relative;
   min-height: 100dvh;
   background: var(--color-purple, #6b4fc9);
   background: linear-gradient(160deg, var(--color-ink) 0%, #3a2566 100%);
@@ -8,6 +9,18 @@
   justify-content: center;
   gap: 40px;
   padding: 24px;
+  /* Fond sombre : tout bouton "ghost" descendant devient crème au lieu
+     d'encre-sur-encre (quasi invisible). Hérite par le DOM, donc valable
+     aussi pour les boutons rendus par les composants de phase. */
+  --ghost-color: var(--color-cream);
+}
+
+/* Ancré en haut à droite de l'écran plutôt que dans la colonne centrale : le
+   menu d'options ne fait partie d'aucune phase. */
+.options {
+  position: absolute;
+  top: 16px;
+  right: 16px;
 }
 
 .observerNote {
@@ -32,7 +45,23 @@
   }
 }
 
-.stopButton {
-  color: var(--color-cream);
-  border-color: var(--color-cream);
+/* Modale de confirmation d'arrêt : fond crème, donc les boutons "ghost" y
+   reprennent leur couleur encre par défaut (la variable n'est posée que sur
+   .stage, et la modale est rendue dedans -> on la neutralise ici). */
+.confirmTitle {
+  font-size: 1.5rem;
+  color: var(--color-ink);
+  margin-bottom: 12px;
+}
+
+.confirmText {
+  color: var(--color-ink);
+  margin-bottom: 20px;
+}
+
+.confirmActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  --ghost-color: var(--color-ink);
 }

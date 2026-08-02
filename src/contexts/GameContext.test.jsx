@@ -133,6 +133,7 @@ describe('GameContext', () => {
     ['validateProposition', [], 'game:validateProposition', {}],
     ['buyCard', ['MAX_LENGTH'], 'game:buyCard', { cardId: 'MAX_LENGTH' }],
     ['advanceResolution', ['next'], 'game:advanceResolution', { action: 'next' }],
+    ['advanceRecap', [], 'game:advanceRecap', {}],
   ])('%s emits %s with the right payload', async (fnName, args, event, payload) => {
     emitAsync.mockResolvedValue({});
     renderWithProviders(socket, (ctx) => {

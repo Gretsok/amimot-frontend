@@ -59,11 +59,12 @@ describe('PropositionPhase', () => {
     expect(ctx.validateProposition).toHaveBeenCalled();
   });
 
-  it('locks the input and shows "Validé" once validated', () => {
+  it('locks the input and shows a validated status once validated', () => {
     mockUseGamePhase.mockReturnValue(baseCtx({ myGameState: { hand: [], proposalWord: 'cola', proposalValidated: true } }));
     render(<PropositionPhase gameConfig={gameConfig} />);
     expect(screen.getByPlaceholderText('Ta proposition')).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Validé' })).toBeDisabled();
+    expect(screen.getByText('✓ Proposition validée')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Valider' })).not.toBeInTheDocument();
   });
 
   it('does not show a "Modifier" button before validation', () => {

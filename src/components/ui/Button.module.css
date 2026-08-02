@@ -30,9 +30,15 @@
   color: var(--color-cream);
 }
 
+/* Le variant "ghost" n'a ni fond ni ombre : sa lisibilité dépend entièrement
+   de la surface sur laquelle il est posé. `--ghost-color` permet à un écran
+   sombre (cf. .stage de GameScreen) de basculer texte + bordure en crème sans
+   que chaque bouton ait à le redéclarer. Repli sur l'encre pour les fonds
+   clairs (lobby, modales). */
 .ghost {
   background: transparent;
-  color: var(--color-ink);
+  color: var(--ghost-color, var(--color-ink));
+  border-color: var(--ghost-color, var(--color-ink));
   box-shadow: none;
 }
 

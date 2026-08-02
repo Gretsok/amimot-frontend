@@ -73,4 +73,28 @@ describe('ShopPhase', () => {
     render(<ShopPhase gameConfig={gameConfig} />);
     screen.getAllByRole('button', { name: 'Acheter' }).forEach((btn) => expect(btn).toBeDisabled());
   });
+  // Le nom et le prix seuls ne disaient pas ce que fait la carte.
+  it('describes what each card does', () => {
+    mockUseGamePhase.mockReturnValue(baseCtx());
+    render(<ShopPhase gameConfig={gameConfig} />);
+    expect(screen.getByText(/devront contenir la lettre choisie/)).toBeInTheDocument();
+  });
+
+  // On ne voyait pas sa main au moment de décider d'un achat.
+  it('shows the current hand, grouping duplicates', () => {
+    mockUseGamePhase.mockReturnValue(
+      baseCtx({
+        myGameState: {
+          hand: [
+            { instanceId: 'a', type: 'MAX_LENGTH' },
+            { instanceId: 'b', type: 'MAX_LENGTH' },
+            { instanceId: 'c', type: 'IMPOSE_LETTER' },
+          ],
+        },
+      })
+    );
+    render(<ShopPhase gameConfig={gameConfig} />);
+    expect(screen.getByText(/Ta main \(3\//)).toBeInTheDocument();
+    expect(screen.getByText('×2')).toBeInTheDocument();
+  });
 });

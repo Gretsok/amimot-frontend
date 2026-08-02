@@ -1,0 +1,50 @@
+/* Empilés en bas de l'écran, hors du flux : `pointer-events: none` sur le
+   conteneur pour ne jamais bloquer un clic de jeu pendant une phase
+   chronométrée — seuls les toasts eux-mêmes restent cliquables. */
+.stack {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--color-cream);
+  background: var(--color-danger);
+  border: var(--border-width) solid var(--color-ink);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  padding: 12px 20px;
+  max-width: 100%;
+  animation: toast-in 0.15s ease-out;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .toast {
+    max-width: 480px;
+  }
+}

@@ -30,6 +30,19 @@
   margin: 0 0 12px;
 }
 
+.description {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  margin: 0 0 16px;
+}
+
+.precheckWarning {
+  color: var(--color-danger);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
 .targetFieldset {
   border: none;
   padding: 0;

@@ -37,3 +37,38 @@ export function describeWordOutcome(wordEntry, scoringConfig) {
 
   return perPlayer;
 }
+
+// Formulation partagée entre la révélation (résolution) et le récap des
+// points : une seule source pour que le joueur retrouve exactement le même
+// vocabulaire aux deux endroits.
+export function reasonText(reason) {
+  switch (reason.type) {
+    case 'GROUP_MATCH':
+      return `+${reason.points} (${reason.groupSize} joueurs ont dit ce mot)`;
+    case 'TRAP_VICTIM':
+      return `+${reason.points} (tombé dans le piège)`;
+    case 'TRAP_SETTER':
+      return `+${reason.points} (${reason.victimCount} joueur${reason.victimCount > 1 ? 's' : ''} piégé${
+        reason.victimCount > 1 ? 's' : ''
+      })`;
+    case 'SELF_TRAP':
+      return `${reason.points} (son propre piège !)`;
+    default:
+      return '';
+  }
+}
+
+// Agrège les raisons de TOUS les mots révélés d'une manche, par joueur —
+// c'est ce qui manquait au récap, qui n'affichait qu'un total sans jamais
+// dire pourquoi. Un joueur absent de tous les mots n'a rien proposé.
+export function describeRoundOutcome(words = [], scoringConfig) {
+  const perPlayer = {};
+  words.forEach((word) => {
+    const outcome = describeWordOutcome(word, scoringConfig);
+    Object.entries(outcome).forEach(([playerId, reasons]) => {
+      if (!perPlayer[playerId]) perPlayer[playerId] = [];
+      perPlayer[playerId].push(...reasons);
+    });
+  });
+  return perPlayer;
+}

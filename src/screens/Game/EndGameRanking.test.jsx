@@ -63,4 +63,16 @@ describe('EndGameRanking', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Retour au lobby' }));
     expect(ctx.returnToLobby).toHaveBeenCalled();
   });
+  // Le non-hôte n'avait ni bouton ni message : écran figé sans issue.
+  it('tells a non-host that the game is waiting on the host', () => {
+    mockUseGamePhase.mockReturnValue(baseCtx({ player: { id: 'p2', state: 'IN_GAME' } }));
+    render(<EndGameRanking />);
+    expect(screen.getByText(/En attente de l/)).toBeInTheDocument();
+  });
+
+  it('highlights the current player own row', () => {
+    mockUseGamePhase.mockReturnValue(baseCtx({ player: { id: 'p2', state: 'IN_GAME' } }));
+    const { container } = render(<EndGameRanking />);
+    expect(container.querySelectorAll('li[class*="self"]')).toHaveLength(1);
+  });
 });

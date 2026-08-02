@@ -21,6 +21,7 @@ export function useGamePhase() {
     unvalidateProposition,
     buyCard,
     advanceResolution,
+    advanceRecap,
     returnToLobby,
   } = ctx;
   return {
@@ -37,6 +38,7 @@ export function useGamePhase() {
     unvalidateProposition,
     buyCard,
     advanceResolution,
+    advanceRecap,
     returnToLobby,
   };
 }

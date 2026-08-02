@@ -54,11 +54,14 @@ describe('PreparationPhase', () => {
     expect(ctx.validateTrapWord).toHaveBeenCalled();
   });
 
-  it('shows "Validé" and disables the input once the trap word is validated', () => {
+  // "Validé" est désormais un statut, pas un bouton désactivé : "Modifier"
+  // cessait sinon d'être secondaire visuellement.
+  it('shows a validated status (not a disabled button) and locks the input', () => {
     const ctx = baseCtx({ myGameState: { hand: [], trapWord: 'chat', trapWordValid: true } });
     mockUseGamePhase.mockReturnValue(ctx);
     render(<PreparationPhase gameConfig={gameConfig} />);
-    expect(screen.getByRole('button', { name: 'Validé' })).toBeDisabled();
+    expect(screen.getByText('✓ Mot-piège validé')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Valider' })).not.toBeInTheDocument();
     expect(screen.getByPlaceholderText('Ton mot-piège')).toBeDisabled();
   });
 
@@ -77,10 +80,12 @@ describe('PreparationPhase', () => {
     expect(ctx.unvalidateTrapWord).toHaveBeenCalled();
   });
 
-  it('shows an observer note instead of the input for an observer', () => {
+  // Le bandeau observateur est rendu une seule fois, par GameScreen : la
+  // phase n'affiche plus son propre message redondant.
+  it('hides the input for an observer without duplicating the observer note', () => {
     mockUseGamePhase.mockReturnValue(baseCtx({ player: { id: 'p1', state: 'OBSERVER' } }));
     render(<PreparationPhase gameConfig={gameConfig} />);
-    expect(screen.getByText(/observes cette manche/)).toBeInTheDocument();
+    expect(screen.queryByText(/observes cette manche/)).not.toBeInTheDocument();
     expect(screen.queryByPlaceholderText('Ton mot-piège')).not.toBeInTheDocument();
   });
 

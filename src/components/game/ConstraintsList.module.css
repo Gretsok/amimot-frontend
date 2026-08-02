@@ -18,9 +18,16 @@
   font-weight: 600;
 }
 
+/* --color-danger et non le rose de marque : le rose sert aussi aux boutons
+   secondaires et aux décors, il ne se lit pas comme une erreur. */
 .violated {
-  background: var(--color-pink);
+  background: var(--color-danger);
   color: var(--color-cream);
+}
+
+.owner {
+  font-weight: 400;
+  opacity: 0.75;
 }
 
 .empty {

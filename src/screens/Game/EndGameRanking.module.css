@@ -33,6 +33,19 @@
   padding: 12px 16px;
 }
 
+.self {
+  border-color: var(--color-mint);
+  box-shadow: var(--shadow-lg);
+}
+
+.waitingNote {
+  color: var(--color-cream);
+  font-size: 0.9rem;
+  opacity: 0.8;
+  text-align: center;
+  margin-top: 12px;
+}
+
 .rank {
   font-family: var(--font-display);
   font-size: 1.4rem;

@@ -157,6 +157,7 @@ export function GameProvider({ children }) {
   const unvalidateProposition = useCallback(() => emitAsync('game:unvalidateProposition', {}), []);
   const buyCard = useCallback((cardId) => emitAsync('game:buyCard', { cardId }), []);
   const advanceResolution = useCallback((action) => emitAsync('game:advanceResolution', { action }), []);
+  const advanceRecap = useCallback(() => emitAsync('game:advanceRecap', {}), []);
 
   return (
     <GameContext.Provider
@@ -184,6 +185,7 @@ export function GameProvider({ children }) {
         unvalidateProposition,
         buyCard,
         advanceResolution,
+        advanceRecap,
         resetLocalState: reset,
       }}
     >

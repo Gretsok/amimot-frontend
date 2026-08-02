@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import Button from '../../components/ui/Button';
+import Modal from '../../components/ui/Modal';
+import OptionsMenu from '../../components/ui/OptionsMenu';
 import PreparationPhase from './PreparationPhase';
 import PropositionPhase from './PropositionPhase';
 import ResolutionPhase from './ResolutionPhase';
@@ -25,6 +27,7 @@ export default function GameScreen() {
   const { gameState, stopGame } = useGameState();
   const { showError } = useErrorPopup();
   const [gameConfig, setGameConfig] = useState(null);
+  const [confirmingStop, setConfirmingStop] = useState(false);
 
   useEffect(() => {
     api.gameDefaults().then(setGameConfig).catch(() => {});
@@ -38,6 +41,7 @@ export default function GameScreen() {
   const PhaseComponent = PHASE_COMPONENTS[gameState.phase];
 
   async function handleStop() {
+    setConfirmingStop(false);
     try {
       await stopGame();
     } catch (err) {
@@ -53,6 +57,13 @@ export default function GameScreen() {
         </div>
       ) : (
         <>
+          {/* Hors du flux vertical : chaque phase a UN bouton qui compte, et
+              "Arrêter la partie" ne doit pas lui faire concurrence. */}
+          {isHost && (
+            <div className={styles.options}>
+              <OptionsMenu items={[{ label: 'Arrêter la partie', onSelect: () => setConfirmingStop(true) }]} />
+            </div>
+          )}
           {isObserver && (
             <p className={styles.observerNote}>
               Tu observes cette partie déjà commencée — tu pourras jouer à la prochaine manche.
@@ -63,13 +74,25 @@ export default function GameScreen() {
               <PhaseComponent gameConfig={gameConfig} />
             </div>
           )}
-          {isHost && (
-            <Button variant="ghost" onClick={handleStop} className={styles.stopButton}>
-              Arrêter la partie
-            </Button>
-          )}
         </>
       )}
+
+      {/* L'arrêt coupe la partie de TOUS les joueurs : on confirme, comme
+          pour la suppression de compte. */}
+      <Modal open={confirmingStop} onClose={() => setConfirmingStop(false)}>
+        <h2 className={styles.confirmTitle}>Arrêter la partie ?</h2>
+        <p className={styles.confirmText}>
+          La partie prendra fin pour tout le monde et vous reviendrez à la salle d&apos;attente.
+        </p>
+        <div className={styles.confirmActions}>
+          <Button variant="ghost" onClick={() => setConfirmingStop(false)}>
+            Continuer à jouer
+          </Button>
+          <Button variant="secondary" onClick={handleStop}>
+            Arrêter la partie
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 }

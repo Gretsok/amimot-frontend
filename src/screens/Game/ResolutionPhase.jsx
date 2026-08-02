@@ -4,23 +4,8 @@ import Button from '../../components/ui/Button';
 import PlayerChip from '../../components/ui/PlayerChip';
 import { useGamePhase } from '../../hooks/useGamePhase';
 import { useErrorPopup } from '../../components/ErrorPopup/ErrorPopupContext';
-import { describeWordOutcome } from '../../domain/describeResolutionWord';
+import { describeWordOutcome, reasonText } from '../../domain/describeResolutionWord';
 import styles from './ResolutionPhase.module.css';
-
-function reasonText(reason) {
-  switch (reason.type) {
-    case 'GROUP_MATCH':
-      return `+${reason.points} (${reason.groupSize} joueurs ont dit ce mot)`;
-    case 'TRAP_VICTIM':
-      return `+${reason.points} (tombé dans le piège)`;
-    case 'TRAP_SETTER':
-      return `+${reason.points} (${reason.victimCount} joueur${reason.victimCount > 1 ? 's' : ''} piégé${reason.victimCount > 1 ? 's' : ''})`;
-    case 'SELF_TRAP':
-      return `${reason.points} (son propre piège !)`;
-    default:
-      return '';
-  }
-}
 
 export default function ResolutionPhase({ gameConfig }) {
   const { room, player, gameState, advanceResolution } = useGamePhase();
@@ -31,8 +16,12 @@ export default function ResolutionPhase({ gameConfig }) {
   const { revealedWordIndex, words, pacingMode } = gameState.resolution;
 
   const showingRecap = revealedWordIndex < 0;
-  const currentWord = !showingRecap ? words[revealedWordIndex] : null;
+  // L'index peut valoir words.length le temps d'un aller-retour serveur (ce
+  // cran est ce qui termine la phase) : on reste sur le dernier mot plutôt que
+  // de rendre un écran vide.
+  const currentWord = !showingRecap ? words[Math.min(revealedWordIndex, words.length - 1)] : null;
   const outcome = currentWord ? describeWordOutcome(currentWord, gameConfig.scoring) : {};
+  const isLastWord = revealedWordIndex >= words.length - 1;
 
   function playerName(id) {
     const p = room.players.find((pl) => pl.id === id);
@@ -46,17 +35,9 @@ export default function ResolutionPhase({ gameConfig }) {
     return room.players.find((pl) => pl.id === id) || { id, displayName: playerName(id) };
   }
 
-  async function handleNext() {
+  async function run(action) {
     try {
-      await advanceResolution('next');
-    } catch (err) {
-      showError(err.code || 'INTERNAL_ERROR', err.message);
-    }
-  }
-
-  async function handleTogglePacing() {
-    try {
-      await advanceResolution('toggleAutoPacing');
+      await advanceResolution(action);
     } catch (err) {
       showError(err.code || 'INTERNAL_ERROR', err.message);
     }
@@ -71,9 +52,36 @@ export default function ResolutionPhase({ gameConfig }) {
           <h2 className={styles.title}>Récap des contraintes</h2>
           <ConstraintsList constraints={gameState.constraints || []} letter={gameState.letter} word="" />
           {words.length === 0 && <p className={styles.note}>Personne n&apos;a proposé de mot cette manche.</p>}
+
+          {/* Les deux rythmes sont présentés comme UN choix (même bloc, même
+              libellé d'intro) : séparés, on lisait "défilement automatique" et
+              "mot suivant" comme deux actions sans rapport, sans comprendre que
+              l'une ou l'autre lance la révélation. */}
+          {isHost && words.length > 0 && (
+            <div className={styles.startChoice}>
+              <p className={styles.startLabel}>
+                Lancer la révélation des {words.length} mot{words.length > 1 ? 's' : ''} :
+              </p>
+              <div className={styles.startOptions}>
+                <Button onClick={() => run('startManual')}>Défilement manuel</Button>
+                <Button variant="secondary" onClick={() => run('startAuto')}>
+                  Défilement automatique
+                </Button>
+              </div>
+              <p className={styles.startHint}>
+                Manuel : tu passes au mot suivant toi-même. Automatique : les mots défilent seuls.
+              </p>
+            </div>
+          )}
+          {!isHost && words.length > 0 && (
+            <p className={styles.waitingNote}>C&apos;est l&apos;hôte qui lance la révélation.</p>
+          )}
         </>
       ) : (
         <div className={styles.reveal}>
+          <p className={styles.progress}>
+            Mot {revealedWordIndex + 1} sur {words.length}
+          </p>
           <h2 className={styles.word}>{currentWord.word}</h2>
           <div className={styles.players}>
             {currentWord.submitterIds.map((id) => (
@@ -109,17 +117,29 @@ export default function ResolutionPhase({ gameConfig }) {
         </div>
       )}
 
-      {isHost && words.length > 0 && (
+      {/* Un SEUL contrôle pendant la révélation : sur le dernier mot, "Mot
+          suivant" devient l'action qui clôt la phase — il n'est jamais désactivé,
+          c'est ce clic qui fait passer au récap des points. */}
+      {!showingRecap && isHost && pacingMode === 'manual' && (
         <div className={styles.hostControls}>
-          <Button onClick={handleTogglePacing} variant="ghost">
-            {pacingMode === 'auto' ? 'Passer en manuel' : 'Défilement automatique'}
-          </Button>
-          {pacingMode === 'manual' && (
-            <Button onClick={handleNext} disabled={revealedWordIndex >= words.length - 1}>
-              Mot suivant
-            </Button>
-          )}
+          <Button onClick={() => run('next')}>{isLastWord ? 'Voir les points' : 'Mot suivant'}</Button>
         </div>
+      )}
+      {!showingRecap && isHost && pacingMode === 'auto' && (
+        <div className={styles.hostControls}>
+          <Button variant="ghost" onClick={() => run('startManual')}>
+            Reprendre la main
+          </Button>
+        </div>
+      )}
+
+      {/* Sans ça, un non-hôte reste devant un écran figé sans savoir qui le
+          fait avancer ni combien de temps ça dure (cette phase n'a pas de
+          chrono serveur). */}
+      {!showingRecap && !isHost && (
+        <p className={styles.waitingNote}>
+          {pacingMode === 'auto' ? 'Les mots défilent automatiquement.' : "C'est l'hôte qui fait défiler."}
+        </p>
       )}
     </div>
   );

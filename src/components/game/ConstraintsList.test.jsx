@@ -41,4 +41,40 @@ describe('ConstraintsList', () => {
     expect(screen.getByText(/Commence par/)).not.toHaveClass(styles.violated);
     expect(screen.getByText(/Sans la lettre/)).not.toHaveClass(styles.violated);
   });
+
+  // Cette règle bloquait la validation sans jamais être affichée : le joueur
+  // se retrouvait devant un bouton grisé sans explication.
+  it('displays the constant minimum-length rule and flags it when unmet', () => {
+    const { rerender } = render(<ConstraintsList constraints={[]} letter="C" word="c" constantMinWordLength={2} />);
+    expect(screen.getByText(/Au moins 2 lettres/)).toHaveClass(styles.violated);
+
+    rerender(<ConstraintsList constraints={[]} letter="C" word="chat" constantMinWordLength={2} />);
+    expect(screen.getByText(/Au moins 2 lettres/)).not.toHaveClass(styles.violated);
+  });
+
+  it('omits the minimum-length chip where it does not apply (resolution recap)', () => {
+    render(<ConstraintsList constraints={[]} letter="C" word="" />);
+    expect(screen.queryByText(/Au moins/)).not.toBeInTheDocument();
+  });
+
+  it('attributes each constraint to the player who played it', () => {
+    render(
+      <ConstraintsList
+        constraints={[{ id: 'c1', type: 'FORBID_LETTER', value: 'H', ownerId: 'p2' }]}
+        letter="C"
+        word=""
+        players={[
+          { id: 'p1', displayName: 'Léa' },
+          { id: 'p2', displayName: 'Marc' },
+        ]}
+      />
+    );
+    expect(screen.getByText(/Marc/)).toBeInTheDocument();
+  });
+
+  // La couleur seule ne se lit pas comme une erreur (et exclut les daltoniens).
+  it('marks a violated constraint with a non-colour indicator', () => {
+    render(<ConstraintsList constraints={[]} letter="C" word="loup" />);
+    expect(screen.getByText(/Commence par/).textContent).toContain('✕');
+  });
 });

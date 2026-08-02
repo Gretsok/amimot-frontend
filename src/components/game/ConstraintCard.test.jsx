@@ -75,6 +75,43 @@ describe('ConstraintCard', () => {
     expect(screen.getByRole('button', { name: 'Confirmer' })).not.toBeDisabled();
   });
 
+  // Le refus est expliqué AVANT le clic plutôt que découvert via une erreur
+  // serveur (qui, elle, éjectait le joueur de sa partie avant correction).
+  it('disables "Confirmer" with an explanation when the play would self-invalidate', async () => {
+    const onPlay = vi.fn();
+    render(
+      <ConstraintCard
+        card={{ instanceId: 'c1', type: 'FORBID_LETTER' }}
+        onPlay={onPlay}
+        validatePlay={() => ({ valid: false, reason: 'SELF_INVALIDATING_CARD' })}
+      />
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Jouer' }));
+    await userEvent.type(screen.getByPlaceholderText('Lettre'), 'h');
+
+    expect(screen.getByText('Cette carte invaliderait ton propre mot-piège.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Confirmer' })).toBeDisabled();
+    expect(onPlay).not.toHaveBeenCalled();
+  });
+
+  it('stays playable when validatePlay accepts the value', async () => {
+    const onPlay = vi.fn();
+    render(
+      <ConstraintCard
+        card={{ instanceId: 'c1', type: 'FORBID_LETTER' }}
+        onPlay={onPlay}
+        validatePlay={() => ({ valid: true })}
+      />
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Jouer' }));
+    await userEvent.type(screen.getByPlaceholderText('Lettre'), 'z');
+    await userEvent.click(screen.getByRole('button', { name: 'Confirmer' }));
+
+    expect(onPlay).toHaveBeenCalledWith('c1', 'FORBID_LETTER', 'Z');
+  });
+
   it('groups the target-constraint radios in a labeled fieldset', async () => {
     render(
       <ConstraintCard

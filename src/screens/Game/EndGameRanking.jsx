@@ -2,6 +2,7 @@ import Button from '../../components/ui/Button';
 import PlayerChip from '../../components/ui/PlayerChip';
 import { useGamePhase } from '../../hooks/useGamePhase';
 import { useErrorPopup } from '../../components/ErrorPopup/ErrorPopupContext';
+import { formatPoints } from '../../domain/formatScore';
 import styles from './EndGameRanking.module.css';
 
 // Classement "à la sportive" : les égalités partagent le même rang (ex: deux
@@ -42,17 +43,22 @@ export default function EndGameRanking() {
       <h1 className={styles.title}>Classement final</h1>
       <ol className={styles.list}>
         {ranking.map((p) => (
-          <li key={p.id} className={styles.row}>
+          <li key={p.id} className={`${styles.row} ${p.id === player.id ? styles.self : ''}`}>
             <span className={styles.rank}>{p.rank}</span>
             <PlayerChip player={p} isHost={p.id === room.hostPlayerId} />
-            <span className={styles.score}>{p.score} pts</span>
+            <span className={styles.score}>{formatPoints(p.score)}</span>
           </li>
         ))}
       </ol>
-      {isHost && (
+      {isHost ? (
         <Button onClick={handleReturn} className={styles.returnButton}>
           Retour au lobby
         </Button>
+      ) : (
+        // Sans ça, le non-hôte reste devant un classement figé sans savoir
+        // qu'il attend une action de l'hôte. Rendu en <p> : les tests
+        // indexent les <li> du classement.
+        <p className={styles.waitingNote}>En attente de l&apos;hôte pour revenir à la salle d&apos;attente…</p>
       )}
     </div>
   );
