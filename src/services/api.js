@@ -34,8 +34,14 @@ async function request(path, options = {}) {
 }
 
 export const api = {
-  register: (email, password, pseudo) =>
-    request('/auth/register', { method: 'POST', body: JSON.stringify({ email, password, pseudo }) }),
+  // `acceptedPolicy` est refusé par le serveur s'il n'est pas explicitement
+  // true : l'information (art. 12-13) et la déclaration d'âge conditionnent la
+  // création du compte, elles ne sont pas une case cosmétique côté client.
+  register: (email, password, pseudo, acceptedPolicy) =>
+    request('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, pseudo, acceptedPolicy }),
+    }),
   login: (email, password) =>
     request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
   logout: () => request('/auth/logout', { method: 'POST' }),
@@ -43,6 +49,7 @@ export const api = {
   updateMe: (pseudo) => request('/account/me', { method: 'PATCH', body: JSON.stringify({ pseudo }) }),
   deleteMe: () => request('/account/me', { method: 'DELETE' }),
   exportMe: () => request('/account/me/export'),
+  unlinkAccount: (accountId) => request(`/account/me/accounts/${accountId}`, { method: 'DELETE' }),
   resolveInviteCode: (inviteCode) => request(`/rooms/${inviteCode}/resolve`),
   gameDefaults: () => request('/config/game-defaults'),
 };

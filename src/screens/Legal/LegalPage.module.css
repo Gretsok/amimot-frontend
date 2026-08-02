@@ -1,0 +1,101 @@
+.stage {
+  min-height: 100dvh;
+  background: linear-gradient(160deg, var(--color-ink) 0%, #3a2566 100%);
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px 64px;
+}
+
+.sheet {
+  width: 100%;
+  max-width: 720px;
+  background: var(--color-cream);
+  border: var(--border-width-lg) solid var(--color-ink);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 28px 24px;
+  color: var(--color-ink);
+  /* Fond crème : les boutons "ghost" éventuels y reprennent l'encre. */
+  --ghost-color: var(--color-ink);
+}
+
+@media (min-width: 768px) {
+  .sheet {
+    padding: 40px 48px;
+  }
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  margin: 0 0 8px;
+}
+
+.updated {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  margin: 0 0 24px;
+}
+
+/* Styles de contenu : les pages légales sont du texte long, pas des écrans de
+   jeu — on assume une typographie de document plutôt que des composants. */
+.sheet h2 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  margin: 28px 0 8px;
+}
+
+.sheet h3 {
+  font-size: 1rem;
+  margin: 20px 0 6px;
+}
+
+.sheet p,
+.sheet li {
+  line-height: 1.6;
+  margin: 0 0 10px;
+}
+
+.sheet ul {
+  padding-left: 20px;
+  margin: 0 0 12px;
+}
+
+.sheet a {
+  color: var(--color-ink);
+  text-decoration: underline;
+}
+
+/* Les tableaux de traitements débordent sur mobile : ils défilent dans leur
+   propre conteneur plutôt que de faire défiler toute la page. */
+.tableWrap {
+  overflow-x: auto;
+  margin: 0 0 16px;
+}
+
+.sheet table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 480px;
+  font-size: 0.9rem;
+}
+
+.sheet th,
+.sheet td {
+  border: 2px solid var(--color-ink);
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.sheet th {
+  background: var(--color-yellow);
+  font-weight: 700;
+}

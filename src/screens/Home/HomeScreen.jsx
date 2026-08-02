@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Button from '../../components/ui/Button';
 import TextInput from '../../components/ui/TextInput';
 import AuthOverlay from '../../components/Account/AuthOverlay';
-import ProfileOverlay from '../../components/Account/ProfileOverlay';
 import { useAuth } from '../../hooks/useAuth';
 import { useRoom } from '../../hooks/useRoom';
 import { useErrorPopup } from '../../components/ErrorPopup/ErrorPopupContext';
@@ -19,7 +19,6 @@ export default function HomeScreen() {
   const [displayName, setDisplayName] = useState('');
   const [inviteCode, setInviteCode] = useState('');
   const [authOpen, setAuthOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -89,9 +88,9 @@ export default function HomeScreen() {
 
         <div className={styles.accountRow}>
           {user ? (
-            <Button variant="link" onClick={() => setProfileOpen(true)}>
-              Mon profil ({user.pseudo})
-            </Button>
+            <Link to="/compte" className={styles.accountLink}>
+              Mon compte ({user.pseudo})
+            </Link>
           ) : (
             <Button variant="link" onClick={() => setAuthOpen(true)}>
               Se connecter / créer un compte
@@ -100,8 +99,15 @@ export default function HomeScreen() {
         </div>
       </div>
 
+      {/* Art. 12 : l'information doit être « aisément accessible » — donc
+          atteignable depuis l'accueil, sans compte et sans avoir à chercher. */}
+      <footer className={styles.legalFooter}>
+        <Link to="/confidentialite">Confidentialité</Link>
+        <span aria-hidden="true">·</span>
+        <Link to="/mentions-legales">Mentions légales</Link>
+      </footer>
+
       <AuthOverlay open={authOpen} onClose={() => setAuthOpen(false)} />
-      <ProfileOverlay open={profileOpen} onClose={() => setProfileOpen(false)} />
     </div>
   );
 }

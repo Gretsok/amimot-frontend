@@ -16,3 +16,46 @@
   font-size: 0.9rem;
   margin: 0;
 }
+
+.hint {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  margin: -8px 0 0;
+}
+
+.hintViolated {
+  composes: hint;
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+/* Case + libellé alignés en haut : le texte passe sur deux lignes en mobile et
+   ne doit pas décaler la case. */
+.consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.consent input {
+  margin-top: 2px;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.consent a {
+  color: var(--color-ink);
+  text-decoration: underline;
+}
+
+.retention {
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  margin: -6px 0 0;
+}

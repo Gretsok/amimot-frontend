@@ -87,3 +87,36 @@
   text-align: center;
   margin-top: 8px;
 }
+
+/* Aligné visuellement sur Button variant="link", qu'il remplace : c'est
+   désormais une vraie navigation, donc un <Link>, pas un bouton. */
+.accountLink {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-ink);
+  text-decoration: underline;
+}
+
+/* Hors de la carte : discret, mais toujours visible sans défilement sur mobile. */
+.legalFooter {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+  font-size: 0.8rem;
+  color: var(--color-cream);
+}
+
+.legalFooter a {
+  color: var(--color-cream);
+  opacity: 0.85;
+  text-decoration: underline;
+}
+
+.legalFooter a:hover,
+.legalFooter a:focus-visible {
+  opacity: 1;
+}
