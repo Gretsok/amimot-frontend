@@ -102,6 +102,67 @@
   word-break: break-all;
 }
 
+/* Pastille d'état de l'adresse, à côté du moyen de connexion concerné. */
+.verified,
+.unverified {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  margin-top: 4px;
+}
+
+.verified {
+  color: var(--color-success, #1f7a3d);
+}
+
+.unverified {
+  color: var(--color-danger);
+}
+
+.accountMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+/* Rappel en haut de page tant que l'adresse n'est pas confirmée : c'est elle
+   qui conditionne la réinitialisation du mot de passe, donc la capacité à
+   récupérer son compte. */
+.verifyBanner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  margin-top: 8px;
+  border: var(--border-width-lg) solid var(--color-ink);
+  border-radius: var(--radius-md, 10px);
+  background: #fff3d6;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.dataForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hint {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  margin: -4px 0 0;
+}
+
+.hintViolated {
+  composes: hint;
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
 .dataActions {
   display: flex;
   flex-direction: column;

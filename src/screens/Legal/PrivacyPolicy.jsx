@@ -42,9 +42,21 @@ export default function PrivacyPolicy() {
           <tbody>
             <tr>
               <td>Adresse email</td>
-              <td>Créer le compte et permettre la connexion</td>
+              <td>
+                Créer le compte, permettre la connexion, et t&apos;envoyer la confirmation
+                d&apos;adresse et les liens de réinitialisation de mot de passe
+              </td>
               <td>Exécution du contrat</td>
               <td>Jusqu&apos;à suppression du compte</td>
+            </tr>
+            <tr>
+              <td>Jetons envoyés par email (confirmation, réinitialisation)</td>
+              <td>Vérifier que tu relèves bien cette adresse</td>
+              <td>Exécution du contrat</td>
+              <td>
+                7 jours (confirmation) ou 1 heure (réinitialisation) ; supprimés dès usage.
+                Seule une empreinte est stockée, jamais le lien lui-même
+              </td>
             </tr>
             <tr>
               <td>Mot de passe (empreinte bcrypt)</td>
@@ -92,9 +104,18 @@ export default function PrivacyPolicy() {
           Si tu ne te connectes pas pendant 760 jours (environ deux ans), ton compte et toutes les
           données ci-dessus sont supprimés automatiquement.
         </strong>{' '}
-        Nous ne sommes pas en mesure de te prévenir avant cette échéance : le service n&apos;envoie
-        aucun email. C&apos;est pourquoi cette information t&apos;est donnée ici et au moment de
-        l&apos;inscription.
+        Aucun rappel ne t&apos;est envoyé avant cette échéance : c&apos;est pourquoi
+        l&apos;information t&apos;est donnée ici et au moment de l&apos;inscription. Une simple
+        connexion remet le compteur à zéro.
+      </p>
+
+      <h2>Emails que tu peux recevoir</h2>
+      <p>
+        Amimot ne t&apos;envoie que des messages liés au fonctionnement de ton compte : la
+        confirmation de ton adresse à l&apos;inscription, et le lien de réinitialisation lorsque
+        tu le demandes. <strong>Aucun message promotionnel, aucune newsletter</strong>, et ton
+        adresse n&apos;est transmise à personne à cette fin. Ces envois passent par la messagerie
+        d&apos;OVH, déjà notre hébergeur.
       </p>
 
       <h2>Cookie</h2>

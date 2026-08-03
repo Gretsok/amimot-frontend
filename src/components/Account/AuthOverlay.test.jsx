@@ -12,11 +12,12 @@ function renderOverlay() {
   const auth = {
     login: vi.fn().mockResolvedValue({}),
     register: vi.fn().mockResolvedValue({}),
+    onClose: vi.fn(),
   };
   mockUseAuth.mockReturnValue(auth);
   render(
     <MemoryRouter>
-      <AuthOverlay open onClose={vi.fn()} />
+      <AuthOverlay open onClose={auth.onClose} />
     </MemoryRouter>
   );
   return auth;
@@ -64,8 +65,8 @@ describe('AuthOverlay', () => {
     );
   });
 
-  // Faute de pouvoir prévenir par email, la suppression pour inactivité doit
-  // être annoncée à la collecte.
+  // Aucun rappel n'est envoyé avant la suppression pour inactivité : elle doit
+  // donc être annoncée à la collecte.
   it('announces the inactivity deletion at signup', async () => {
     renderOverlay();
     await switchToRegister();
@@ -95,5 +96,46 @@ describe('AuthOverlay', () => {
     await userEvent.click(screen.getByRole('button', { name: "S'inscrire" }));
 
     expect(auth.register).toHaveBeenCalledWith('lea@example.com', 'correct horse battery', 'Léa', true);
+  });
+
+  async function signUp() {
+    const auth = renderOverlay();
+    await switchToRegister();
+    await userEvent.type(screen.getByPlaceholderText('Email'), 'lea@example.com');
+    await userEvent.type(screen.getByPlaceholderText('Pseudo (15 caractères max)'), 'Léa');
+    await userEvent.type(screen.getByPlaceholderText('Mot de passe'), 'correct horse battery');
+    await userEvent.click(screen.getByRole('checkbox'));
+    await userEvent.click(screen.getByRole('button', { name: "S'inscrire" }));
+    return auth;
+  }
+
+  // Un email vient de partir : le dire au moment où on l'attend évite de le
+  // chercher dans les indésirables trois jours plus tard.
+  it('announces the confirmation email instead of closing silently', async () => {
+    const auth = await signUp();
+
+    expect(await screen.findByRole('heading', { name: 'Compte créé' })).toBeInTheDocument();
+    expect(screen.getByText('lea@example.com')).toBeInTheDocument();
+    expect(auth.onClose).not.toHaveBeenCalled();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Continuer' }));
+    expect(auth.onClose).toHaveBeenCalled();
+  });
+
+  // Rien dans le jeu ne dépend de la confirmation : le dire évite de laisser
+  // croire qu'il faut attendre son message pour jouer.
+  it('says the account is usable before confirming', async () => {
+    await signUp();
+    expect(await screen.findByText(/Tu peux jouer sans attendre/)).toBeInTheDocument();
+  });
+
+  // Une connexion, elle, n'a rien à annoncer : la modale doit disparaître.
+  it('closes immediately after a login', async () => {
+    const auth = renderOverlay();
+    await userEvent.type(screen.getByPlaceholderText('Email'), 'lea@example.com');
+    await userEvent.type(screen.getByPlaceholderText('Mot de passe'), 'correct horse battery');
+    await userEvent.click(screen.getByRole('button', { name: 'Se connecter' }));
+
+    expect(auth.onClose).toHaveBeenCalled();
   });
 });

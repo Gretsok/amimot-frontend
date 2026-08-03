@@ -61,6 +61,14 @@
   margin-top: -6px;
 }
 
+.confirmSent {
+  color: var(--color-ink);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+  word-break: break-word;
+}
+
 .retention {
   color: var(--color-muted);
   font-size: 0.78rem;

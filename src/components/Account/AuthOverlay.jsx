@@ -19,6 +19,10 @@ export default function AuthOverlay({ open, onClose }) {
   const [pseudo, setPseudo] = useState('');
   const [acceptedPolicy, setAcceptedPolicy] = useState(false);
   const [error, setError] = useState(null);
+  // On ne ferme pas la modale immédiatement après une inscription : un email
+  // vient de partir, le dire au moment où on l'attend évite de le chercher
+  // dans les indésirables trois jours plus tard.
+  const [registeredEmail, setRegisteredEmail] = useState(null);
 
   const isRegister = mode === 'register';
   const passwordTooShort = isRegister && password.length > 0 && password.length < PASSWORD_MIN_LENGTH;
@@ -30,13 +34,35 @@ export default function AuthOverlay({ open, onClose }) {
     try {
       if (isRegister) {
         await register(email, password, pseudo, acceptedPolicy);
-      } else {
-        await login(email, password);
+        setRegisteredEmail(email);
+        return;
       }
+      await login(email, password);
       onClose();
     } catch (err) {
       setError(err.message);
     }
+  }
+
+  if (registeredEmail) {
+    return (
+      <Modal open={open} onClose={onClose}>
+        <h2 className={styles.title}>Compte créé</h2>
+        <div className={styles.form}>
+          <p className={styles.confirmSent}>
+            Un email de confirmation vient d&apos;être envoyé à <strong>{registeredEmail}</strong>.
+            Ouvre le lien qu&apos;il contient pour confirmer ton adresse.
+          </p>
+          <p className={styles.hint}>
+            Tu peux jouer sans attendre. La confirmation sert à garantir que tu pourras
+            réinitialiser ton mot de passe si tu l&apos;oublies.
+          </p>
+          <Button type="button" onClick={onClose}>
+            Continuer
+          </Button>
+        </div>
+      </Modal>
+    );
   }
 
   return (
@@ -91,8 +117,8 @@ export default function AuthOverlay({ open, onClose }) {
                 .
               </span>
             </label>
-            {/* Annoncé à la collecte, faute de pouvoir prévenir par email au
-                moment venu (le service n'envoie aucun message). */}
+            {/* Annoncé à la collecte : aucun rappel n'est envoyé au moment
+                venu, c'est donc ici que l'information doit être donnée. */}
             <p className={styles.retention}>
               Sans connexion pendant 760 jours, ton compte et tes données sont supprimés
               automatiquement.

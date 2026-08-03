@@ -12,6 +12,7 @@ import GameScreen from './screens/Game/GameScreen';
 import AccountScreen from './screens/Account/AccountScreen';
 import ForgotPasswordScreen from './screens/Auth/ForgotPasswordScreen';
 import ResetPasswordScreen from './screens/Auth/ResetPasswordScreen';
+import VerifyEmailScreen from './screens/Auth/VerifyEmailScreen';
 import PrivacyPolicy from './screens/Legal/PrivacyPolicy';
 import LegalNotice from './screens/Legal/LegalNotice';
 import { useAuth } from './hooks/useAuth';
@@ -53,6 +54,9 @@ function AppShell() {
             lien d'email, précisément parce qu'on ne peut plus se connecter. */}
         <Route path="/mot-de-passe-oublie" element={<ForgotPasswordScreen />} />
         <Route path="/reinitialiser" element={<ResetPasswordScreen />} />
+        {/* Sans session non plus : on peut confirmer son adresse depuis un
+            autre appareil que celui où l'on s'est inscrit. */}
+        <Route path="/confirmer-email" element={<VerifyEmailScreen />} />
         <Route path="/confidentialite" element={<PrivacyPolicy />} />
         <Route path="/mentions-legales" element={<LegalNotice />} />
         <Route path="*" element={<Navigate to="/" replace />} />

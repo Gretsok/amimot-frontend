@@ -8,6 +8,7 @@ import { api } from '../../services/api';
 import styles from './AccountScreen.module.css';
 
 const PROVIDER_LABELS = { LOCAL: 'Email et mot de passe', GOOGLE: 'Google' };
+const PASSWORD_MIN_LENGTH = 12;
 
 // Remplace l'ancienne modale de profil : les droits RGPD (accès, portabilité,
 // effacement) doivent vivre dans un endroit stable, atteignable par URL et
@@ -19,6 +20,11 @@ export default function AccountScreen() {
   const [error, setError] = useState(null);
   const [notice, setNotice] = useState(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [passwordError, setPasswordError] = useState(null);
+  const [passwordNotice, setPasswordNotice] = useState(null);
+  const [resending, setResending] = useState(false);
 
   // Les réponses de connexion/inscription ne portent que le profil public, sans
   // la liste des moyens de connexion : sans ce rafraîchissement, la section
@@ -79,12 +85,54 @@ export default function AccountScreen() {
     }
   }
 
+  async function handleChangePassword(e) {
+    e.preventDefault();
+    setPasswordError(null);
+    setPasswordNotice(null);
+    try {
+      await api.changePassword(currentPassword, newPassword);
+      setCurrentPassword('');
+      setNewPassword('');
+      setPasswordNotice(
+        'Mot de passe modifié. Les autres sessions ouvertes sur ce compte ont été déconnectées.'
+      );
+    } catch (err) {
+      setPasswordError(err.message);
+    }
+  }
+
+  async function handleResendVerification() {
+    setError(null);
+    setNotice(null);
+    setResending(true);
+    try {
+      const { alreadyVerified } = await api.resendVerification();
+      if (alreadyVerified) {
+        await refresh();
+        setNotice('Ton adresse était déjà confirmée.');
+      } else {
+        setNotice('Email de confirmation renvoyé. Pense à regarder dans les indésirables.');
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setResending(false);
+    }
+  }
+
   async function handleLogout() {
     await logout();
     navigate('/', { replace: true });
   }
 
   const accounts = user.accounts || [];
+  const localAccount = accounts.find((account) => account.provider === 'LOCAL');
+  // Tant que la liste n'est pas chargée, on ne montre ni bannière ni section
+  // mot de passe : les afficher puis les faire disparaître serait pire que
+  // d'attendre une fraction de seconde.
+  const needsVerification = Boolean(localAccount && !localAccount.emailVerifiedAt);
+  const canChangePassword = Boolean(localAccount);
+  const passwordTooShort = newPassword.length > 0 && newPassword.length < PASSWORD_MIN_LENGTH;
 
   return (
     <div className={styles.stage}>
@@ -96,6 +144,19 @@ export default function AccountScreen() {
 
         {error && <p className={styles.error}>{error}</p>}
         {notice && <p className={styles.notice}>{notice}</p>}
+
+        {needsVerification && (
+          <div className={styles.verifyBanner}>
+            <span>
+              <strong>Ton adresse email n&apos;est pas encore confirmée.</strong> Ouvre le lien
+              reçu à l&apos;inscription. Sans confirmation, nous ne pouvons pas garantir que tu
+              recevras le lien de réinitialisation si tu oublies ton mot de passe.
+            </span>
+            <Button variant="ghost" onClick={handleResendVerification} disabled={resending}>
+              Renvoyer l&apos;email de confirmation
+            </Button>
+          </div>
+        )}
 
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Profil</h2>
@@ -118,10 +179,12 @@ export default function AccountScreen() {
             {accounts.length === 0 && <li className={styles.text}>Chargement…</li>}
             {accounts.map((account) => (
               <li key={account.id} className={styles.account}>
-                <span>
+                <span className={styles.accountMain}>
                   <strong>{PROVIDER_LABELS[account.provider] || account.provider}</strong>
-                  <br />
                   <span className={styles.accountEmail}>{account.email}</span>
+                  <span className={account.emailVerifiedAt ? styles.verified : styles.unverified}>
+                    {account.emailVerifiedAt ? 'Adresse confirmée' : 'Adresse non confirmée'}
+                  </span>
                 </span>
                 {/* Le serveur refuse de délier le dernier moyen de connexion ;
                     on masque le bouton plutôt que de proposer une action vouée
@@ -136,6 +199,52 @@ export default function AccountScreen() {
           </ul>
         </section>
 
+        {/* Le mot de passe actuel est exigé : sans lui, un poste laissé ouvert
+            suffirait à verrouiller le compte de son propriétaire. La
+            réinitialisation par email reste la porte de sortie pour qui l'a
+            oublié — d'où le lien vers celle-ci juste en dessous. */}
+        {canChangePassword && (
+          <section className={styles.section}>
+            <h2 className={styles.sectionTitle}>Mot de passe</h2>
+            <form onSubmit={handleChangePassword} className={styles.dataForm}>
+              <label className={styles.label} htmlFor="current-password">
+                Mot de passe actuel
+              </label>
+              <TextInput
+                id="current-password"
+                type="password"
+                autoComplete="current-password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
+              <label className={styles.label} htmlFor="new-password">
+                Nouveau mot de passe
+              </label>
+              <TextInput
+                id="new-password"
+                type="password"
+                autoComplete="new-password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              <p className={passwordTooShort ? styles.hintViolated : styles.hint}>
+                {PASSWORD_MIN_LENGTH} caractères minimum.
+              </p>
+              {passwordError && <p className={styles.error}>{passwordError}</p>}
+              {passwordNotice && <p className={styles.notice}>{passwordNotice}</p>}
+              <Button
+                type="submit"
+                disabled={!currentPassword || newPassword.length < PASSWORD_MIN_LENGTH}
+              >
+                Changer mon mot de passe
+              </Button>
+            </form>
+            <p className={styles.text}>
+              Tu l&apos;as oublié ? <Link to="/mot-de-passe-oublie">Reçois un lien par email</Link>.
+            </p>
+          </section>
+        )}
+
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Données et confidentialité</h2>
           <p className={styles.text}>
@@ -147,7 +256,8 @@ export default function AccountScreen() {
             <strong>
               Sans connexion pendant 760 jours, ton compte est supprimé automatiquement.
             </strong>{' '}
-            Aucun email ne peut t&apos;en avertir à l&apos;avance.
+            Nous n&apos;envoyons pas de rappel avant : une simple connexion remet le compteur à
+            zéro.
           </p>
           <div className={styles.dataActions}>
             <Button variant="ghost" onClick={handleExport}>
