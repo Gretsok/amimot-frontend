@@ -9,18 +9,28 @@ export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setError(null);
     setBusy(true);
     try {
       await api.forgotPassword(email);
-    } catch {
-      // Volontairement ignoré : l'écran affiche le même message quoi qu'il
-      // arrive. Distinguer les cas révélerait quelles adresses ont un compte.
+      setSent(true);
+    } catch (err) {
+      // Cet écran affichait « lien envoyé » quoi qu'il arrive, y compris sur
+      // un 429 ou une panne d'envoi — de quoi chercher pendant des jours un
+      // message qui n'est jamais parti. Ni l'un ni l'autre ne dépend de
+      // l'existence du compte, donc les signaler ne révèle rien ; seul le cas
+      // « adresse inconnue » doit rester indiscernable, et il le reste (204).
+      if (err.status === 429) {
+        setError('Trop de demandes. Réessaie dans quelques minutes.');
+      } else {
+        setError("L'envoi a échoué. Réessaie dans un instant.");
+      }
     } finally {
       setBusy(false);
-      setSent(true);
     }
   }
 
@@ -58,6 +68,7 @@ export default function ForgotPasswordScreen() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
+            {error && <p className={styles.error}>{error}</p>}
             <Button type="submit" disabled={busy || !email.trim()}>
               Envoyer le lien
             </Button>

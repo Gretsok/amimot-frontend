@@ -8,7 +8,6 @@ import { api } from '../../services/api';
 import styles from './AccountScreen.module.css';
 
 const PROVIDER_LABELS = { LOCAL: 'Email et mot de passe', GOOGLE: 'Google' };
-const PASSWORD_MIN_LENGTH = 12;
 
 // Remplace l'ancienne modale de profil : les droits RGPD (accès, portabilité,
 // effacement) doivent vivre dans un endroit stable, atteignable par URL et
@@ -20,10 +19,9 @@ export default function AccountScreen() {
   const [error, setError] = useState(null);
   const [notice, setNotice] = useState(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
   const [passwordError, setPasswordError] = useState(null);
   const [passwordNotice, setPasswordNotice] = useState(null);
+  const [sendingLink, setSendingLink] = useState(false);
   const [resending, setResending] = useState(false);
 
   // Les réponses de connexion/inscription ne portent que le profil public, sans
@@ -85,19 +83,19 @@ export default function AccountScreen() {
     }
   }
 
-  async function handleChangePassword(e) {
-    e.preventDefault();
+  async function handleRequestPasswordChange() {
     setPasswordError(null);
     setPasswordNotice(null);
+    setSendingLink(true);
     try {
-      await api.changePassword(currentPassword, newPassword);
-      setCurrentPassword('');
-      setNewPassword('');
+      const { email } = await api.requestPasswordChange();
       setPasswordNotice(
-        'Mot de passe modifié. Les autres sessions ouvertes sur ce compte ont été déconnectées.'
+        `Lien envoyé à ${email}. Il expire dans une heure et ne fonctionne qu'une fois.`
       );
     } catch (err) {
       setPasswordError(err.message);
+    } finally {
+      setSendingLink(false);
     }
   }
 
@@ -132,7 +130,6 @@ export default function AccountScreen() {
   // d'attendre une fraction de seconde.
   const needsVerification = Boolean(localAccount && !localAccount.emailVerifiedAt);
   const canChangePassword = Boolean(localAccount);
-  const passwordTooShort = newPassword.length > 0 && newPassword.length < PASSWORD_MIN_LENGTH;
 
   return (
     <div className={styles.stage}>
@@ -199,49 +196,27 @@ export default function AccountScreen() {
           </ul>
         </section>
 
-        {/* Le mot de passe actuel est exigé : sans lui, un poste laissé ouvert
-            suffirait à verrouiller le compte de son propriétaire. La
-            réinitialisation par email reste la porte de sortie pour qui l'a
-            oublié — d'où le lien vers celle-ci juste en dessous. */}
+        {/* Le changement passe obligatoirement par le mail. Un formulaire
+            "mot de passe actuel + nouveau" tenait cette place : il prouvait
+            une connaissance, pas un accès à la boîte, et cohabitait mal avec
+            un lien "mot de passe oublié" qui redemandait l'adresse affichée
+            juste au-dessus. */}
         {canChangePassword && (
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>Mot de passe</h2>
-            <form onSubmit={handleChangePassword} className={styles.dataForm}>
-              <label className={styles.label} htmlFor="current-password">
-                Mot de passe actuel
-              </label>
-              <TextInput
-                id="current-password"
-                type="password"
-                autoComplete="current-password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-              />
-              <label className={styles.label} htmlFor="new-password">
-                Nouveau mot de passe
-              </label>
-              <TextInput
-                id="new-password"
-                type="password"
-                autoComplete="new-password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
-              <p className={passwordTooShort ? styles.hintViolated : styles.hint}>
-                {PASSWORD_MIN_LENGTH} caractères minimum.
-              </p>
-              {passwordError && <p className={styles.error}>{passwordError}</p>}
-              {passwordNotice && <p className={styles.notice}>{passwordNotice}</p>}
-              <Button
-                type="submit"
-                disabled={!currentPassword || newPassword.length < PASSWORD_MIN_LENGTH}
-              >
-                Changer mon mot de passe
-              </Button>
-            </form>
             <p className={styles.text}>
-              Tu l&apos;as oublié ? <Link to="/mot-de-passe-oublie">Reçois un lien par email</Link>.
+              Pour changer ton mot de passe, nous t&apos;envoyons un lien à{' '}
+              <strong>{localAccount.email}</strong>.
             </p>
+            <p className={styles.text}>
+              C&apos;est ce qui garantit que seule la personne qui relève cette adresse peut le
+              changer.
+            </p>
+            {passwordError && <p className={styles.error}>{passwordError}</p>}
+            {passwordNotice && <p className={styles.notice}>{passwordNotice}</p>}
+            <Button onClick={handleRequestPasswordChange} disabled={sendingLink}>
+              M&apos;envoyer le lien
+            </Button>
           </section>
         )}
 
@@ -256,8 +231,8 @@ export default function AccountScreen() {
             <strong>
               Sans connexion pendant 760 jours, ton compte est supprimé automatiquement.
             </strong>{' '}
-            Nous n&apos;envoyons pas de rappel avant : une simple connexion remet le compteur à
-            zéro.
+            Nous t&apos;envoyons un rappel par email un mois avant : une simple connexion remet
+            le compteur à zéro.
           </p>
           <div className={styles.dataActions}>
             <Button variant="ghost" onClick={handleExport}>

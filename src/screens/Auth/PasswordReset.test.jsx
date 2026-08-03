@@ -37,17 +37,45 @@ describe('ForgotPasswordScreen', () => {
     expect(await screen.findByText(/Si un compte existe/)).toBeInTheDocument();
   });
 
-  // Le serveur répond 204 quelle que soit l'adresse ; l'interface ne doit pas
-  // réintroduire la fuite en distinguant les cas.
-  it('shows the same message even when the request fails', async () => {
-    mockApi.forgotPassword.mockRejectedValue(new Error('inconnu'));
+  // Le serveur répond 204 quelle que soit l'adresse : connue ou inconnue,
+  // l'interface reçoit la même chose et affiche donc la même chose. C'est là,
+  // et là seulement, que l'indiscernabilité se joue.
+  it('shows the same message for an address that has no account', async () => {
     renderAt('/mot-de-passe-oublie', <ForgotPasswordScreen />);
 
     await userEvent.type(screen.getByPlaceholderText('Email'), 'personne@example.com');
     await userEvent.click(screen.getByRole('button', { name: 'Envoyer le lien' }));
 
     expect(await screen.findByText(/Si un compte existe/)).toBeInTheDocument();
-    expect(screen.queryByText(/inconnu/)).not.toBeInTheDocument();
+  });
+
+  // Cet écran annonçait « lien envoyé » même sur échec — de quoi chercher
+  // pendant des jours un message jamais parti. Un 429 ne dépend pas de
+  // l'existence du compte : le signaler ne révèle rien.
+  it('reports a rate limit instead of claiming the link was sent', async () => {
+    const err = new Error('Trop de tentatives, réessayez plus tard.');
+    err.status = 429;
+    mockApi.forgotPassword.mockRejectedValue(err);
+    renderAt('/mot-de-passe-oublie', <ForgotPasswordScreen />);
+
+    await userEvent.type(screen.getByPlaceholderText('Email'), 'lea@example.com');
+    await userEvent.click(screen.getByRole('button', { name: 'Envoyer le lien' }));
+
+    expect(await screen.findByText(/Trop de demandes/)).toBeInTheDocument();
+    expect(screen.queryByText(/Si un compte existe/)).not.toBeInTheDocument();
+  });
+
+  it('reports a failed send instead of claiming the link was sent', async () => {
+    const err = new Error('Erreur 500');
+    err.status = 500;
+    mockApi.forgotPassword.mockRejectedValue(err);
+    renderAt('/mot-de-passe-oublie', <ForgotPasswordScreen />);
+
+    await userEvent.type(screen.getByPlaceholderText('Email'), 'lea@example.com');
+    await userEvent.click(screen.getByRole('button', { name: 'Envoyer le lien' }));
+
+    expect(await screen.findByText(/L'envoi a échoué/)).toBeInTheDocument();
+    expect(screen.queryByText(/Si un compte existe/)).not.toBeInTheDocument();
   });
 
   // Un compte Google n'a pas de mot de passe : sans cette mention, la personne

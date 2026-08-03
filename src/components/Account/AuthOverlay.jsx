@@ -117,11 +117,12 @@ export default function AuthOverlay({ open, onClose }) {
                 .
               </span>
             </label>
-            {/* Annoncé à la collecte : aucun rappel n'est envoyé au moment
-                venu, c'est donc ici que l'information doit être donnée. */}
+            {/* Annoncé à la collecte, et rappelé par email trente jours avant
+                l'échéance : l'annonce seule intervient deux ans trop tôt pour
+                qu'on s'en souvienne. */}
             <p className={styles.retention}>
               Sans connexion pendant 760 jours, ton compte et tes données sont supprimés
-              automatiquement.
+              automatiquement. Nous te prévenons par email un mois avant.
             </p>
           </>
         )}

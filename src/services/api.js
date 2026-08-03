@@ -51,11 +51,10 @@ export const api = {
     request('/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email }) }),
   resetPassword: (token, password) =>
     request('/auth/reset-password', { method: 'POST', body: JSON.stringify({ token, password }) }),
-  changePassword: (currentPassword, newPassword) =>
-    request('/auth/change-password', {
-      method: 'POST',
-      body: JSON.stringify({ currentPassword, newPassword }),
-    }),
+  // Envoie le même lien que "mot de passe oublié", mais à l'adresse du compte
+  // connecté. Contrairement à forgotPassword, les erreurs sont réelles et
+  // doivent être affichées : rien à dissimuler pour un appelant authentifié.
+  requestPasswordChange: () => request('/auth/request-password-change', { method: 'POST' }),
   verifyEmail: (token) =>
     request('/auth/verify-email', { method: 'POST', body: JSON.stringify({ token }) }),
   resendVerification: () => request('/auth/resend-verification', { method: 'POST' }),

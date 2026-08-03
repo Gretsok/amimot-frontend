@@ -20,7 +20,7 @@ const mockApi = vi.hoisted(() => ({
   deleteMe: vi.fn(),
   exportMe: vi.fn(),
   unlinkAccount: vi.fn(),
-  changePassword: vi.fn(),
+  requestPasswordChange: vi.fn(),
   resendVerification: vi.fn(),
 }));
 vi.mock('../../services/api', () => ({ api: mockApi }));
@@ -65,7 +65,7 @@ describe('AccountScreen', () => {
     mockApi.deleteMe.mockResolvedValue({});
     mockApi.exportMe.mockResolvedValue({ pseudo: 'Léa' });
     mockApi.unlinkAccount.mockResolvedValue({});
-    mockApi.changePassword.mockResolvedValue({});
+    mockApi.requestPasswordChange.mockResolvedValue({ email: 'lea@example.com' });
     mockApi.resendVerification.mockResolvedValue({ alreadyVerified: false });
   });
 
@@ -153,43 +153,47 @@ describe('AccountScreen', () => {
   });
 
   describe('changement de mot de passe', () => {
-    async function fill(current, next) {
-      await userEvent.type(screen.getByLabelText('Mot de passe actuel'), current);
-      await userEvent.type(screen.getByLabelText('Nouveau mot de passe'), next);
-    }
-
-    it('sends both passwords', async () => {
+    // Le changement passe obligatoirement par le mail : c'est ce qui vérifie
+    // que la personne relève bien l'adresse de son compte.
+    it('sends a link instead of changing the password in place', async () => {
       renderScreen();
-      await fill('ancien mot de passe', 'nouveau mot de passe');
-      await userEvent.click(screen.getByRole('button', { name: 'Changer mon mot de passe' }));
+      await userEvent.click(screen.getByRole('button', { name: "M'envoyer le lien" }));
 
-      expect(mockApi.changePassword).toHaveBeenCalledWith(
-        'ancien mot de passe',
-        'nouveau mot de passe'
-      );
+      expect(mockApi.requestPasswordChange).toHaveBeenCalled();
+      expect(await screen.findByText(/Lien envoyé à lea@example.com/)).toBeInTheDocument();
     });
 
-    // Exiger le mot de passe actuel est ce qui empêche un poste laissé ouvert
-    // de servir à verrouiller le compte de son propriétaire.
-    it('stays disabled without the current password', async () => {
+    // Un formulaire "mot de passe actuel + nouveau" tenait cette place : il
+    // prouvait une connaissance, pas un accès à la boîte.
+    it('offers no password field at all', () => {
       renderScreen();
-      await userEvent.type(screen.getByLabelText('Nouveau mot de passe'), 'nouveau mot de passe');
-      expect(screen.getByRole('button', { name: 'Changer mon mot de passe' })).toBeDisabled();
+      expect(screen.queryByLabelText('Mot de passe actuel')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText('Nouveau mot de passe')).not.toBeInTheDocument();
     });
 
-    it('stays disabled while the new password is too short', async () => {
+    // Le lien "Mot de passe oublié" redemandait l'adresse affichée juste
+    // au-dessus : un non-sens une fois connecté.
+    it('does not send a signed-in user back to the anonymous flow', () => {
       renderScreen();
-      await fill('ancien mot de passe', 'court');
-      expect(screen.getByRole('button', { name: 'Changer mon mot de passe' })).toBeDisabled();
+      expect(
+        screen.queryByRole('link', { name: /Mot de passe oublié|Reçois un lien/ })
+      ).not.toBeInTheDocument();
     });
 
-    it('reports a rejected current password', async () => {
+    it('names the address the link goes to', () => {
       renderScreen();
-      mockApi.changePassword.mockRejectedValue(new Error('Mot de passe actuel incorrect.'));
-      await fill('mauvais mot de passe', 'nouveau mot de passe');
-      await userEvent.click(screen.getByRole('button', { name: 'Changer mon mot de passe' }));
+      const section = screen.getByRole('heading', { name: 'Mot de passe' }).closest('section');
+      expect(section).toHaveTextContent('lea@example.com');
+    });
 
-      expect(await screen.findByText('Mot de passe actuel incorrect.')).toBeInTheDocument();
+    // Contrairement au parcours anonyme, l'appelant est authentifié : rien à
+    // dissimuler, donc une panne d'envoi doit lui être dite.
+    it('reports a send failure', async () => {
+      renderScreen();
+      mockApi.requestPasswordChange.mockRejectedValue(new Error('Erreur 500'));
+      await userEvent.click(screen.getByRole('button', { name: "M'envoyer le lien" }));
+
+      expect(await screen.findByText('Erreur 500')).toBeInTheDocument();
     });
 
     // Le compte Google n'a pas de mot de passe : proposer d'en changer un
@@ -200,14 +204,6 @@ describe('AccountScreen', () => {
       renderScreen(auth);
 
       expect(screen.queryByRole('heading', { name: 'Mot de passe' })).not.toBeInTheDocument();
-    });
-
-    it('points to the reset flow for a forgotten password', () => {
-      renderScreen();
-      expect(screen.getByRole('link', { name: 'Reçois un lien par email' })).toHaveAttribute(
-        'href',
-        '/mot-de-passe-oublie'
-      );
     });
   });
 

@@ -145,24 +145,6 @@
   line-height: 1.5;
 }
 
-.dataForm {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.hint {
-  color: var(--color-muted);
-  font-size: 0.8rem;
-  margin: -4px 0 0;
-}
-
-.hintViolated {
-  composes: hint;
-  color: var(--color-danger);
-  font-weight: 600;
-}
-
 .dataActions {
   display: flex;
   flex-direction: column;

@@ -104,17 +104,18 @@ export default function PrivacyPolicy() {
           Si tu ne te connectes pas pendant 760 jours (environ deux ans), ton compte et toutes les
           données ci-dessus sont supprimés automatiquement.
         </strong>{' '}
-        Aucun rappel ne t&apos;est envoyé avant cette échéance : c&apos;est pourquoi
-        l&apos;information t&apos;est donnée ici et au moment de l&apos;inscription. Une simple
-        connexion remet le compteur à zéro.
+        Un rappel t&apos;est envoyé par email <strong>trente jours avant</strong> cette
+        échéance, à l&apos;adresse de ton compte. Une simple connexion remet le compteur à zéro.
       </p>
 
       <h2>Emails que tu peux recevoir</h2>
       <p>
         Amimot ne t&apos;envoie que des messages liés au fonctionnement de ton compte : la
-        confirmation de ton adresse à l&apos;inscription, et le lien de réinitialisation lorsque
-        tu le demandes. <strong>Aucun message promotionnel, aucune newsletter</strong>, et ton
-        adresse n&apos;est transmise à personne à cette fin. Ces envois passent par la messagerie
+        confirmation de ton adresse à l&apos;inscription, le lien pour définir un nouveau mot de
+        passe lorsque tu le demandes, le rappel avant suppression pour inactivité, et la
+        confirmation lorsque ton compte est supprimé.{' '}
+        <strong>Aucun message promotionnel, aucune newsletter</strong>, et ton adresse
+        n&apos;est transmise à personne à cette fin. Ces envois passent par la messagerie
         d&apos;OVH, déjà notre hébergeur.
       </p>
 
